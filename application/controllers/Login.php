@@ -722,6 +722,17 @@ class Login extends CI_Controller
 		$this->template->set_layout("layout/login_layout.php");
 		$this->template->loadContent("login/banned.php", array());
 	}
+	
+
+	public function load_login_posts($id, $page)
+	{
+		$posts_inf = $this->login_model->get_login_feed(1, 1);
+		$sql = $this->db->last_query();
+		echo $sql;
+		exit(0);
+
+	
+	}
 
 
 }

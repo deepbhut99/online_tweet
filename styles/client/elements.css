@@ -916,12 +916,11 @@ table.dataTable {
     position: relative;
     display: inline-block;
     margin: 1px;
-    width: 90px;
     vertical-align: top;
     text-align: center;
     padding: 2px;
     height: 100%;
-    width: calc(18% - -14.6rem);
+    width: calc(7% - -14.6rem);
 }
 
 .album-image img {

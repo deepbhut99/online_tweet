@@ -1,0 +1,11 @@
+.login-avtar {
+    border-radius: 50%;
+}
+
+.d-flex {
+    display: flex !important;
+}
+
+.img-border-radius-1 {
+    border-radius: 0.5rem;
+}

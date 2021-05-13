@@ -1,3 +1,6 @@
+
+
+
 <div class="login-wrapper columns is-gapless">
   <!--Left Side (Desktop Only)-->
   <div class="column is-6 is-hidden-mobile hero-banner">
@@ -5,25 +8,133 @@
       <div class="hero-body">
         <div class="container">
           <div class="left-caption">
-            <h2>Join an Exciting Social Experience.</h2>
-            
+           
+
+            <!-- pinal nu card -->
+            <div class="card mt-5">
+              <div class="card-body pb-0">
+                <?php $users = $this->login_model->get_login_feed(1, 1);
+               
+
+                foreach ($users->result() as $rr) :
+                  $rr->content = $this->common->replace_user_tags($rr->content);
+                  $rr->content = $this->common->replace_hashtags($rr->content);
+                  $rr->content = $this->common->convert_smiles($rr->content);
+                  $script = '';
+                  
+
+                  // $sql = $this->db->last_query();
+                  // echo $sql;
+                  // exit(0);
+
+                ?>
+
+                  <div class="d-flex">
+                    <div>
+                      <img class="login-avtar" src="<?= base_url('images/favicon/favicon.ico') ?>" alt="" height="50" width="50">
+                    </div>
+                    <div class="p-1">
+                      <?php if (isset($rr->username)) : ?>
+                        <h6><?php echo $rr->first_name ?> <?php echo $rr->last_name ?></h6>
+                      <?php endif; ?>
+                    
+                    </div>
+
+                  </div>
+                  <p><?php echo $rr->content ?></p>
+                  <?php
+                  // Display all images in post
+                  $images = $this->login_model->feed_image_multipost($rr->ID);
+                  $script .= '$(".album-images-' . $rr->ID . '").viewer();';
+                  // $sql = $this->db->last_query();
+                  // 	echo $sql;
+                  // 	exit(0);
+                  ?>
+                  <div class="post-image <?php echo $rr->ID ?>">
+
+                    <?php foreach ($images->result() as $key => $rrr) : ?>
+
+                      <?php $count = count($images->result_object)  ?>
+                      <?php if (!empty($rrr->file_name) &&  $count == 1) : ?>
+                        <a data-fancybox="post1" data-lightbox-type="comments" data-thumb="" href="" data-demo-href="">
+                          <img src="<?php echo base_url() ?><?php echo $this->settings->info->upload_path_relative ?>/<?php echo $rrr->file_name ?>" data-demo-src="" alt="<?php echo $rrr->name . "<br>" . $rrr->description ?>">
+                        </a>
+
+                        <!-- multi-post -->
+
+                      <?php elseif ($count > 1) : ?>
+
+                        <?php if (isset($rrr->albumid)) : ?>
+                          <?php $rr->albumid = $rrr->albumid;
+                          $rr->album_name = $rrr->album_name; ?>
+                        <?php endif; ?>
+                        <li class="album-image">
+                          <?php if (isset($rrr->file_name)) : ?>
+                            <img src="<?php echo base_url() ?><?php echo $this->settings->info->upload_path_relative ?>/<?php echo $rrr->file_name ?>" width="140" alt="<?php echo $rrr->name . "<br>" . $rrr->description ?>">
+                          <?php endif; ?>
+
+                        </li>
+                      <?php endif; ?>
+                    <?php endforeach; ?>
+                   
+
+
+                    <?php if (isset($rr->videoid)) : ?>
+                      <div class="post-link is-video">
+                        <?php if (!empty($rr->video_file_name)) : ?>
+
+                          <!-- Link image -->
+                          <div class="link-image">
+                            <video width="100%" controls>
+                              <?php if ($rr->video_extension == ".mp4") : ?>
+                                <source src="<?php echo base_url() ?><?php echo $this->settings->info->upload_path_relative ?>/<?php echo $rr->video_file_name ?>" type="video/mp4">
+                              <?php elseif ($rr->video_extension == ".ogg" || $r->video_extension == ".ogv") : ?>
+                                <source src="<?php echo base_url() ?><?php echo $this->settings->info->upload_path_relative ?>/<?php echo $rr->video_file_name ?>" type="video/ogg">
+                              <?php elseif ($rr->video_extension == ".webm") : ?>
+                                <source src="<?php echo base_url() ?><?php echo $this->settings->info->upload_path_relative ?>/<?php echo $rr->video_file_name ?>" type="video/webm">
+                              <?php endif; ?>
+                              <?php echo lang("ctn_501") ?>
+                            </video>
+
+                          </div>
+                          <!-- Link content -->
+                        <?php elseif (!empty($r->youtube_id)) : ?>
+                          <div class="link-content">
+                            <p><iframe width="100%" height="300px" src="https://www.youtube.com/embed/<?php echo $r->youtube_id ?>" frameborder="0" allowfullscreen></iframe></p>
+                          </div>
+
+                        <?php endif; ?>
+                      </div>
+
+
+
+                    <?php endif; ?>
+
+
+                  </div>
+                <?php endforeach; ?>
+              </div>
+              <!-- pinal card end -->
+
+            </div>
           </div>
         </div>
       </div>
     </div>
+
   </div>
   <!--Right Side-->
   <div class="column is-6 center-block-e">
     <div class="hero form-hero is-fullheight">
 
 
-      
+
 
       <div class="login-page">
-      <div class="login-page-header">
-        <?php echo lang("ctn_304") ?> <?php echo $this->settings->info->site_name ?>
+        <div class="login-page-header">
+          <?php echo lang("ctn_304") ?> <?php echo $this->settings->info->site_name ?>
 
-      </div>
+        </div>
         <?php if (isset($_GET['redirect'])) : ?>
           <?php echo form_open(site_url("login/pro/" . urlencode($_GET['redirect']))) ?>
         <?php else : ?>
@@ -76,4 +187,3 @@
 
     </div>
   </div>
-</div>

@@ -120,17 +120,13 @@
 
 </head>
 
-<body>
+<body class="is-white">
 
-  <nav class="col-xs-12 navbar navbar-header2">
-    <div class="container-fluid mt-2">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
+  <!-- navigationpanal -->
+
+  <div id="main-navbar" class="navbar is-inline-flex is-transparent no-shadow is-hidden-mobile">
+    <div class="container is-fluid">
+      <div class="navbar-brand">
         <?php if ($this->settings->info->logo_option) : ?>
           <a class="navbar-brand-two" href="<?php echo site_url() ?>" title="<?php echo $this->settings->info->site_name ?>"><img src="<?php echo base_url() ?><?php echo $this->settings->info->upload_path_relative ?>/<?php echo $this->settings->info->site_logo ?>" width="123" height="32"></a>
         <?php else : ?>
@@ -139,82 +135,103 @@
           </a>
         <?php endif; ?>
       </div>
-      <div id="navbar" class="navbar-collapse collapse">
-        <ul class="nav navbar-nav navbar-right">
-          <li>
-            <?php echo form_open(site_url(), array("class" => "navbar-form")) ?>
-            <div class="form-group">
-              <input type="text" class="form-control" placeholder="<?php echo lang("ctn_76") ?> ..." id="search-complete">
-            </div>
-            <?php echo form_close() ?>
-          </li>
-          <?php if ($this->user->loggedin) : ?>
-            <li><a href="#" data-target="#" onclick="load_notifications()" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="noti-menu-drop"><span class="glyphicon glyphicon-bell notification-icon"></span><?php if ($this->user->info->noti_count > 0) : ?><span class="badge notification-badge small-text"><?php echo $this->user->info->noti_count ?></span><?php endif; ?></a>
+      <div class="navbar-menu">
+        <div class="navbar-end">
+          <ul class="nav navbar-nav">
+            <li>
+              <?php echo form_open(site_url(), array("class" => "navbar-form")) ?>
+              <div class="form-group">
+                <input type="text" class="form-control" placeholder="<?php echo lang("ctn_76") ?> ..." id="search-complete">
+              </div>
+              <?php echo form_close() ?>
+            </li>
+            <?php if ($this->user->loggedin) : ?>
+              <li><a href="#" data-target="#" onclick="load_notifications()" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="noti-menu-drop"><span class="glyphicon glyphicon-bell notification-icon"></span><?php if ($this->user->info->noti_count > 0) : ?><span class="badge notification-badge small-text"><?php echo $this->user->info->noti_count ?></span><?php endif; ?></a>
 
-              <ul class="dropdown-menu" aria-labelledby="noti-menu-drop">
-                <li>
-                  <div class="notification-box-title">
-                    <?php echo lang("ctn_412") ?> <?php if ($this->user->info->noti_count > 0) : ?><span class="badge click" id="noti-click-unread" onclick="load_notifications_unread()"><?php echo $this->user->info->noti_count ?></span><?php endif; ?>
-                  </div>
-                  <div id="notifications-scroll">
-                    <div id="loading_spinner_notification">
-                      <span class="glyphicon glyphicon-refresh" id="ajspinner_notification"></span>
+                <ul class="dropdown-menu" aria-labelledby="noti-menu-drop">
+                  <li>
+                    <div class="notification-box-title">
+                      <?php echo lang("ctn_412") ?> <?php if ($this->user->info->noti_count > 0) : ?><span class="badge click" id="noti-click-unread" onclick="load_notifications_unread()"><?php echo $this->user->info->noti_count ?></span><?php endif; ?>
                     </div>
-                  </div>
-                  <div class="notification-box-footer">
-                    <a href="<?php echo site_url("home/notifications") ?>"><?php echo lang("ctn_414") ?></a>
-                  </div>
-                </li>
-              </ul>
-            </li>
-            <li><a href="#" data-target="#" onclick="load_chats()" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="email-menu-drop"><span class="glyphicon glyphicon-envelope notification-icon"></span><span class="badge notification-badge small-text" id="chat-noti"></span></a>
-
-              <ul class="dropdown-menu" aria-labelledby="email-menu-drop">
-                <li>
-                  <div class="notification-box-title">
-                    <?php echo lang("ctn_489") ?> - <a href="<?php echo site_url("chat") ?>"><?php echo lang("ctn_482") ?></a>
-                  </div>
-                  <div id="chat-scroll">
-                    <div id="loading_spinner_email">
-                      <span class="glyphicon glyphicon-refresh" id="ajspinner_email"></span>
+                    <div id="notifications-scroll">
+                      <div id="loading_spinner_notification">
+                        <span class="glyphicon glyphicon-refresh" id="ajspinner_notification"></span>
+                      </div>
                     </div>
-                  </div>
-                  <div class="notification-box-footer">
-                    <a href="#" id="chat-click-more" onclick="load_chat_page()"><?php echo lang("ctn_490") ?></a>
-                  </div>
-                </li>
-              </ul>
+                    <div class="notification-box-footer">
+                      <a href="<?php echo site_url("home/notifications") ?>"><?php echo lang("ctn_414") ?></a>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+              <li><a href="#" data-target="#" onclick="load_chats()" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="email-menu-drop"><span class="glyphicon glyphicon-envelope notification-icon"></span><span class="badge notification-badge small-text" id="chat-noti"></span></a>
 
-            </li>
-            <li class="user_bit"><img src="<?php echo base_url() ?><?php echo $this->settings->info->upload_path_relative ?>/<?php echo $this->user->info->avatar ?>" class="user_avatar"> <a href="javascript:void(0)" class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><?php if ($this->settings->info->user_display_type) : ?>
-                  <?php echo $this->user->info->first_name ?> <?php echo $this->user->info->last_name ?>
-                <?php else : ?>
-                  <?php echo $this->user->info->username ?>
-                <?php endif; ?></a>
-              <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                <li><a href="<?php echo site_url("profile/" . $this->user->info->username) ?>"><?php echo lang("ctn_491") ?></a></li>
-                <li><a href="<?php echo site_url("pages/your") ?>"><?php echo lang("ctn_492") ?></a></li>
-                <li><a href="<?php echo site_url("profile/friends/" . $this->user->info->ID) ?>"><?php echo lang("ctn_493") ?></a></li>
-                <li><a href="<?php echo site_url("user_settings") ?>"><?php echo lang("ctn_156") ?></a></li>
-                <?php if ($this->common->has_permissions(array("admin", "admin_members", "admin_payment", "admin_settings"), $this->user)) : ?>
-                  <li role="separator" class="divider"></li>
-                  <li><a href="<?php echo site_url("admin") ?>"><?php echo lang("ctn_157") ?></a></li>
-                <?php endif; ?>
-              </ul>
-            </li>
-            <li><a href="<?php echo site_url("login/logout/" . $this->security->get_csrf_hash()) ?>"><span class="glyphicon glyphicon-off"></span></a></li>
-          <?php else : ?>
-            <li><a href="<?php echo site_url("login") ?>"><?php echo lang("ctn_150") ?></a></li>
-            <li><a href="<?php echo site_url("register") ?>"><?php echo lang("ctn_151") ?></a></li>
-          <?php endif; ?>
-        </ul>
+                <ul class="dropdown-menu" aria-labelledby="email-menu-drop">
+                  <li>
+                    <div class="notification-box-title">
+                      <?php echo lang("ctn_489") ?> - <a href="<?php echo site_url("chat") ?>"><?php echo lang("ctn_482") ?></a>
+                    </div>
+                    <div id="chat-scroll">
+                      <div id="loading_spinner_email">
+                        <span class="glyphicon glyphicon-refresh" id="ajspinner_email"></span>
+                      </div>
+                    </div>
+                    <div class="notification-box-footer">
+                      <a href="#" id="chat-click-more" onclick="load_chat_page()"><?php echo lang("ctn_490") ?></a>
+                    </div>
+                  </li>
+                </ul>
+
+              </li>
+              <li class="user_bit"><img src="<?php echo base_url() ?><?php echo $this->settings->info->upload_path_relative ?>/<?php echo $this->user->info->avatar ?>" class="user_avatar"> <a href="javascript:void(0)" class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><?php if ($this->settings->info->user_display_type) : ?>
+                    <?php echo $this->user->info->first_name ?> <?php echo $this->user->info->last_name ?>
+                  <?php else : ?>
+                    <?php echo $this->user->info->username ?>
+                  <?php endif; ?></a>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                  <li><a href="<?php echo site_url("profile/" . $this->user->info->username) ?>"><?php echo lang("ctn_491") ?></a></li>
+                  <li><a href="<?php echo site_url("pages/your") ?>"><?php echo lang("ctn_492") ?></a></li>
+                  <li><a href="<?php echo site_url("profile/friends/" . $this->user->info->ID) ?>"><?php echo lang("ctn_493") ?></a></li>
+                  <li><a href="<?php echo site_url("user_settings") ?>"><?php echo lang("ctn_156") ?></a></li>
+                  <?php if ($this->common->has_permissions(array("admin", "admin_members", "admin_payment", "admin_settings"), $this->user)) : ?>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="<?php echo site_url("admin") ?>"><?php echo lang("ctn_157") ?></a></li>
+                  <?php endif; ?>
+                </ul>
+              </li>
+              <li><a href="<?php echo site_url("login/logout/" . $this->security->get_csrf_hash()) ?>"><?php echo lang("ctn_149") ?></a></li>
+            <?php else : ?>
+              <li><a href="<?php echo site_url("login") ?>"><?php echo lang("ctn_150") ?></a></li>
+              <li><a href="<?php echo site_url("register") ?>"><?php echo lang("ctn_151") ?></a></li>
+            <?php endif; ?>
+          </ul>
+        </div>
+
       </div>
     </div>
+  </div>
+  <nav class="navbar mobile-navbar is-hidden-desktop" aria-label="main navigation">
+    <!-- Brand -->
+    <div class="navbar-brand">
+      <?php if ($this->settings->info->logo_option) : ?>
+        <a class="navbar-brand-two" href="<?php echo site_url() ?>" title="<?php echo $this->settings->info->site_name ?>"><img src="<?php echo base_url() ?><?php echo $this->settings->info->upload_path_relative ?>/<?php echo $this->settings->info->site_logo ?>" width="123" height="32"></a>
+      <?php else : ?>
+        <a class="navbar-brand" href="<?php echo site_url() ?>" title="<?php echo $this->settings->info->site_name ?>"><?php echo $this->settings->info->site_name ?></a>
+      <?php endif; ?>
+
+
+      <!-- Mobile menu toggler icon -->
+
+    </div>
+    <!-- Navbar mobile menu -->
+    <div class="navbar-menu">
+      <!-- Account -->
+    </div>
   </nav>
+  <!-- navigation panal end -->
 
-
-
-  <div class="view-wrapper">
+  <div class="view-wrapper is-full">
+    
 
     <?php include(APPPATH . "views/client/client_links.php") ?>
     <!-- Container -->
@@ -240,15 +257,30 @@
 
   <?php include(APPPATH . "views/client/chat.php"); ?>
 
-  <div id="footer" class="clearfix">
-    <span class="pull-left"><?php echo lang("ctn_170") ?> <a href="https://www.patchesoft.com/">Patchesoft</a> - <?php echo $this->settings->info->site_name ?> V<?php echo $this->settings->version ?> - <a href="<?php echo site_url("home/change_language") ?>"><?php echo lang("ctn_171") ?></a></span>
-  </div>
 
   <!-- SCRIPTS -->
   <script src="<?php echo base_url(); ?>scripts/custom/global.js"></script>
   <script src="<?php echo base_url(); ?>scripts/libraries/jquery.nicescroll.min.js"></script>
 
   <!-- new SCRIPT for theme -->
+
+  <!-- Core js -->
+  
+
+  <!-- Page and UI related js -->
+
+
+  <!-- Components js -->
+  <script src="<?php echo base_url(); ?>assets/js/widgets.js"></script>
+  <script src="<?php echo base_url(); ?>assets/js/autocompletes.js"></script>
+  <script src="<?php echo base_url(); ?>assets/js/modal-uploader.js"></script>
+  <script src="<?php echo base_url(); ?>assets/js/popovers-users.js"></script>
+  <script src="<?php echo base_url(); ?>assets/js/popovers-pages.js"></script>
+  <script src="<?php echo base_url(); ?>assets/js/go-live.js"></script>
+  <script src="<?php echo base_url(); ?>assets/js/lightbox.js"></script>
+  <script src="<?php echo base_url(); ?>assets/js/touch.js"></script>
+  <script src="<?php echo base_url(); ?>assets/js/tour.js"></script>
+
 
   <!-- END FOR NEW SRCIPT -->
 

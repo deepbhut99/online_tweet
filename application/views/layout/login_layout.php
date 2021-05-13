@@ -36,6 +36,8 @@
     <link rel="stylesheet" href="<?php echo base_url() ?>assets/css/app.css">
     <link rel="stylesheet" href="<?php echo base_url() ?>assets/css/core.css">
 
+    <link href="<?= base_url('assets/css/login.css')?>" rel="stylesheet" type="text/css">
+
 
 
 

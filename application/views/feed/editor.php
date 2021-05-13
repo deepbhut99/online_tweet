@@ -83,7 +83,7 @@ if (isset($postAs)) {
     </div>
   </div>
 
-  
+
 
 
 
@@ -98,7 +98,7 @@ if (isset($postAs)) {
           <div class="form-group">
             <label for="p-in" class="col-md-4 label-heading"><?php echo lang("ctn_502") ?></label>
             <div class="col-md-8">
-              <input type="file" class="form-control" name="video_file" >
+              <input type="file" class="form-control" name="video_file">
 
             </div>
           </div>
@@ -205,5 +205,14 @@ if (isset($postAs)) {
         <button type="button" class="btn btn-default" data-dismiss="modal"><?php echo lang("ctn_60") ?></button>
       </div>
     </div>
+  </div>
+</div>
+
+<div id="share-modal" class="modal share-modal is-xsmall has-light-bg">
+  <div class="modal-background"></div>
+  <div class="modal-content" id="share-model-1">
+
+   
+
   </div>
 </div>

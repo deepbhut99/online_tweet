@@ -6,8 +6,11 @@
 <div class="modal-body ui-front form-horizontal" id="editPost">
 	<div class="form-group">
 
-		<textarea name="content" class="editor-textarea edit-textarea edit-editor-textarea" id="editor-textarea" placeholder="<?php echo lang("ctn_495") ?>"><?php echo $post->content ?></textarea>
-		<?php echo $this->home->get_user_friends($usersArr)  ?>
+		<?php
+		$post->content = $this->common->replace_hashtags_editor($post->content);
+
+		?>
+		<textarea name="content" class="editor-textarea input ui-autocomplete-input" id="editor-textarea" placeholder="What's on your mind?" autocomplete="off" style="background-color: transparent;"><?php echo $post->content ?></textarea>
 
 	</div>
 	<div class="editor-footer">
@@ -31,13 +34,38 @@
 	</div>
 	<div id="edit-image-area" class="nodisplay">
 		<?php if (isset($post->imageid)) : ?>
-			<?php if (!empty($post->image_file_name)) : ?>
+			<?php
+				// Display all images in post
+				$images = $this->feed_model->feed_image_multipost($post->ID);
+				// $sql = $this->db->last_query();
+				// 	echo $sql;
+				// 	exit(0);
+				?>
+				<?php foreach ($images->result() as $key => $rr) : ?>
 
-				<p><img src="<?php echo base_url() ?><?php echo $this->settings->info->upload_path_relative ?>/<?php echo $post->image_file_name ?>" class="preview-image"></p>
-			<?php else : ?>
-				<p><img src="<?php echo $post->image_file_url ?>" class="preview-image"></p>
-			<?php endif; ?>
+		
+					<?php $count = count($images->result_object)  ?>
+					<?php if (!empty($rr->file_name) &&  $count == 1) : ?>
+						<a data-fancybox="post1" data-lightbox-type="comments" data-thumb="" href="" data-demo-href="">
+							<img src="<?php echo base_url() ?><?php echo $this->settings->info->upload_path_relative ?>/<?php echo $rr->file_name ?>" data-demo-src="" alt="<?php echo $rr->name . "<br>" . $rr->description ?>">
+						</a>
+
+						<!-- multi-post -->
+
+					<?php elseif ($count > 1) : ?>
+ 
+					
+						<li class="album-image">
+							<?php if (isset($rr->file_name)) : ?>
+								<img src="<?php echo base_url() ?><?php echo $this->settings->info->upload_path_relative ?>/<?php echo $rr->file_name ?>" width="140" alt="<?php echo $rr->name . "<br>" . $rr->description ?>">
+							<?php endif; ?>
+
+						</li>
+					<?php endif; ?>
+			<?php endforeach; ?>
 		<?php endif; ?>
+
+		
 		<div class="form-group">
 			<label for="p-in" class="col-md-4 label-heading"><?php echo lang("ctn_499") ?></label>
 			<div class="col-md-8">

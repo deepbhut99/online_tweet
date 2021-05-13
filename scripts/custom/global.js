@@ -113,7 +113,40 @@ $(document).ready(function() {
         $('#notifications-scroll').niceScroll({ touchbehavior: false, zindex: 9999999999 });
     }
 
-
+    $('#search-complete').autocomplete({
+        delay: 300,
+        minLength: 2,
+        source: function(request, response) {
+            $.ajax({
+                type: "GET",
+                url: global_base_url + "home/get_search_results",
+                data: {
+                    query: request.term
+                },
+                dataType: 'JSON',
+                success: function(msg) {
+                    response(msg);
+                }
+            });
+        },
+        focus: function(event, ui) {
+            $(this).val(ui.item.label);
+            return false;
+        },
+        create: function() {
+            $(this).data('ui-autocomplete')._renderItem = function(ul, item) {
+                if (item.type == "user") {
+                    return $('<li class="clearfix search-option-user">')
+                        .append('<div class="search-user-avatar"><img src="' + item.avatar + '"></div><div class="search-user-info"><a href="' + item.url + '">' + item.label + '</a></div>')
+                        .appendTo(ul);
+                } else if (item.type == "page") {
+                    return $('<li class="clearfix search-option-page">')
+                        .append('<div class="search-user-avatar"><img src="' + item.avatar + '"></div><div class="search-user-info"><a href="' + item.url + '">' + item.label + '</a></div>')
+                        .appendTo(ul);
+                }
+            };
+        }
+    });
 
 
     $('#with_users').select2({
@@ -196,6 +229,10 @@ $(document).ready(function() {
                             }
                             $('#feed-comments-spot-' + id).html(msg.content);
                             $('#feed-comments-' + id).html(msg.comments);
+                            $('#feed-comments-share-' + id).html(msg.comments);
+                            load_posts_wrapper();
+
+
                         }
                     });
                 }
@@ -246,6 +283,8 @@ $(document).ready(function() {
                             $('#feed-comments-spot-reply-' + id).html(msg.content);
                             $('#feed-reply-comments-' + id).html("(" + msg.comments + ")");
                             $('#feed-comments-' + msg.feeditemid).html(msg.comments_count);
+                            $('#feed-comments-share-' + msg.feeditemid).html(msg.comments_count);
+                            load_posts_wrapper();
                         }
                     });
                 }
@@ -271,7 +310,134 @@ function addPost(msg) {
     // reload feed
     load_posts_wrapper();
 }
+$(document).ready(function() {
+    //Sidebar
+    if ($('.stories-sidebar').length) {
+        var handleMobileSidebar = function handleMobileSidebar() {
+            if (window.matchMedia("(max-width: 767px)").matches) {
+                $('.stories-sidebar').removeClass('is-active');
+            } else if (window.matchMedia("(max-width: 768px)").matches) {
+                $('.stories-sidebar').removeClass('is-active');
+            } else {
+                $('.stories-sidebar').addClass('is-active');
+            }
+        };
 
+        $('.mobile-sidebar-trigger').on('click', function() {
+            $('.stories-sidebar').addClass('is-active');
+        });
+        $('.close-stories-sidebar').on('click', function() {
+            $(this).closest('.stories-sidebar').removeClass('is-active');
+        });
+        handleMobileSidebar();
+        $(window).on('resize', function() {
+            handleMobileSidebar();
+        });
+    }
+
+    initAutoTag(); //Close selection modal
+
+    $('.new-story-modal .selection-box').on('click', function() {
+        $(this).closest('.modal').removeClass('is-active');
+    });
+
+    function deletePreview() {
+        $('.delete-preview-item').off().on('click', function() {
+            $('.preview-image-container').remove();
+            $('.upload-placeholder, .image-upload-placeholder').removeClass('is-hidden');
+            $('#story-upload, #image-story-upload').val('');
+        });
+    }
+
+    if ($('#story-upload').length) {
+        document.getElementById('story-upload').addEventListener('change', function(event) {
+            var file = event.target.files[0];
+            var fileReader = new FileReader();
+
+            if (file.type.match('image')) {
+                toasts.service.info('', 'mdi mdi-video', 'Please upload a video file', 'bottomRight', 2500);
+                document.getElementById('story-upload').value = null;
+            } else {
+                fileReader.onload = function() {
+                    var blob = new Blob([fileReader.result], {
+                        type: file.type
+                    });
+                    var url = URL.createObjectURL(blob);
+                    var video = document.createElement('video');
+
+                    var timeupdate = function timeupdate() {
+                        if (snapImage()) {
+                            video.removeEventListener('timeupdate', timeupdate);
+                            video.pause();
+                        }
+                    };
+
+                    video.addEventListener('loadeddata', function() {
+                        if (snapImage()) {
+                            video.removeEventListener('timeupdate', timeupdate);
+                        }
+                    });
+
+                    var snapImage = function snapImage() {
+                        var canvas = document.createElement('canvas');
+                        canvas.width = video.videoWidth;
+                        canvas.height = video.videoHeight;
+                        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+                        var image = canvas.toDataURL();
+                        var success = image.length > 100000;
+
+                        if (success) {
+                            var img = "\n                                <div id=\"video-preview-container\" class=\"preview-image-container\">\n                                    <button class=\"delete delete-preview-item\"></button>\n                                    <img class=\"preview-image\" src=\"" + image + "\" alt=\"\">\n                                </div>\n                            ";
+                            document.getElementById('video-upload-placeholder').classList.add('is-hidden');
+                            document.getElementById('preview').insertAdjacentHTML('beforeend', img);
+                            deletePreview();
+                            URL.revokeObjectURL(url);
+                        }
+
+                        return success;
+                    };
+
+                    video.addEventListener('timeupdate', timeupdate);
+                    video.preload = 'metadata';
+                    video.src = url; // Load video in Safari / IE11
+
+                    video.muted = true;
+                    video.playsInline = true;
+                    video.play();
+                };
+
+                fileReader.readAsArrayBuffer(file);
+            }
+
+            var fileEl = document.getElementById('story-upload');
+            console.log(fileEl.files);
+        });
+    }
+
+    if ($('#story-image-upload').length) {
+        document.getElementById('image-story-upload').addEventListener('change', function(event) {
+            var file = event.target.files[0];
+            var fileReader = new FileReader();
+
+            if (file.type.match('image')) {
+                fileReader.onload = function() {
+                    var img = "\n                        <div id=\"image-preview-container\" class=\"preview-image-container\">\n                            <button class=\"delete delete-preview-item\"></button>\n                            <img class=\"preview-image\" src=\"" + fileReader.result + "\" alt=\"\">\n                        </div>\n                    ";
+                    document.getElementById('image-upload-placeholder').classList.add('is-hidden');
+                    document.getElementById('image-preview').insertAdjacentHTML('beforeend', img);
+                    deletePreview();
+                };
+
+                fileReader.readAsDataURL(file);
+            } else {
+                toasts.service.info('', 'mdi mdi-image-outline', 'Please upload an image', 'bottomRight', 2500);
+                document.getElementById('image-story-upload').value = null;
+            }
+
+            var fileEl = document.getElementById('image-story-upload');
+            console.log(fileEl.files);
+        });
+    }
+});
 var global_page = 0;
 var hide_prev = 0;
 
@@ -324,6 +490,7 @@ function load_comments(id) {
         });
     }
 }
+
 
 function load_single_comment(id, commentid, replyid) {
     if ($('#feed-comment-' + id).is(':visible')) {
@@ -427,7 +594,10 @@ function like_feed_post(id) {
             } else {
                 $('#like-button-' + id).removeClass("is-active");
             }
+            $('#feed-likes-share-' + id).html(msg.likes);
             $('#feed-likes-' + id).html(msg.likes);
+            load_posts_wrapper();
+
         }
     })
 }
@@ -516,9 +686,13 @@ function edit_post(id) {
                 },
                 minimumInputLength: 1
             });
+
         }
     })
 }
+// deep made 
+
+
 
 function delete_post(id) {
     $.ajax({
@@ -534,6 +708,26 @@ function delete_post(id) {
             if (msg.success) {
                 $('#feed-post-' + id).fadeOut(500);
             }
+        }
+    })
+}
+
+function share_post(id) {
+    $.ajax({
+        url: global_base_url + 'feed/get_share_post/' + id + '/' + global_hash,
+        type: 'GET',
+        data: {},
+        dataType: 'JSON',
+        success: function(msg) {
+            if (msg.error) {
+                alert(msg.error_msg);
+                return;
+            }
+            if (msg.success) {
+                // reload feed
+                load_posts_wrapper();
+            }
+
         }
     })
 }

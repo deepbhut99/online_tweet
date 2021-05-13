@@ -787,8 +787,34 @@ class User_Model extends CI_Model
     {
     	$this->db->where("ID", $userid)->set("post_count", "post_count-1", FALSE)->update("users");
     }
+//point calculator  
+	public function get_p_point_calculate($id) 
+    {
+		return $this->db->where("userid", $id)->get("feed_item");
+    }
+	public function get_l_point_calculate($id) 
+    {
+		return $this->db->where("userid", $id)->select_sum('likes')->get("feed_item");
+		
+    }
+	public function get_c_point_calculate($id) 
+    {
+		return $this->db->where("userid", $id)->select_sum('comments')->get("feed_item");
+		
+    }
+	public function get_i_point_calculate($id) 
+    {
+		return $this->db->where("userid", $id)->get("user_images");
+		
+    }
+	public function get_v_point_calculate($id) 
+    {
+		return $this->db->where("userid", $id)->get("user_videos");
+		
+    }
+
+
+
 
 
 }
-
-?>

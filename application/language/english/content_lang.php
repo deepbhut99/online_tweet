@@ -180,6 +180,8 @@ $lang['ctn_168'] = "Group Page";
 $lang['ctn_169'] = "User Page";
 $lang['ctn_170'] = "Made By";
 $lang['ctn_171'] = "Change Language";
+$lang['ctn_171'] = "Point System";
+
 
 // Login Area
 $lang['ctn_172'] = "BANNED!";
@@ -710,7 +712,7 @@ $lang['ctn_667'] = "You have a new notification waiting for you at";
 $lang['ctn_668'] = "Login now to view it. Thanks!";
 $lang['ctn_669'] = "Yours";
 $lang['ctn_670'] = "Watchlist";
-$lang['ctn_671'] = "";
+$lang['ctn_671'] = "Share Post";
 $lang['ctn_672'] = "";
 $lang['ctn_673'] = "";
 $lang['ctn_674'] = "";

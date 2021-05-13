@@ -91,6 +91,23 @@ class Common
         return $message;
     }
 
+    public function get_fri_count($fri_count) {
+
+       $new = preg_match_all("/\"\d+\"/", $fri_count, $matches);
+       $fri_count=preg_match_all("/\d+/", $new, $matches_new);
+
+       return $fri_count;
+
+
+
+
+
+    }
+
+
+
+
+
     public function convert_time($timestamp) 
     {
         $time = $timestamp - time();
@@ -302,14 +319,14 @@ class Common
     {
         $matches = array();
         // Looks for @[First Name Last Name](Username)
-        preg_match_all("/@\[[A-Za-z ]+\]\([A-Za-z0-9_]+\)/", $content, $matches);
+        preg_match_all("/@\[[\s+A-Za-z0-9_]+\]\([A-Za-z0-9_]+\)/", $content, $matches);
 
         $usernames = array();
 
         // Once we have our matches, let's get the username.
         foreach($matches[0] as $r) {
             // Grab userid
-            preg_match("/\(([A-Za-z0-9_]+)\)/", $r, $userid);
+            preg_match("/\(([\s+A-Za-z0-9_]+)\)/", $r, $userid);
 
             $usernames[] = $userid[1];
         }
@@ -343,20 +360,61 @@ class Common
     
     public function get_user_hashtag($content) 
     {
-        $matches = [];
-        // Looks for #[hashtag](Userid)
-        preg_match_all("/#\[[A-Za-z0-9]+\]\([A-Za-z0-9_]+\)/", $content, $matches);
+        // $matches = [];
+        // // Looks for #[hashtag](Userid)
+        // preg_match_all("/#\[[A-Za-z0-9]+\]\([A-Za-z0-9_]+\)/", $content, $matches);
         
-        $new = [];
-        // Once we have our matches, let's get convert
-        foreach($matches[0] as $r) {
-            // Grab new form 
-            $name = "";
-            preg_replace("/#([A-Za-z ]+)/", $r, $name);
-            // new string  #xyz  aa type nu thay 
-            $new[] = $name[1];
-        }
-        return $new;
+        // $new = [];
+        // // Once we have our matches, let's get convert
+        // foreach($matches[0] as $r) {
+        //     // Grab new form 
+        //     $name = "";
+        //     preg_replace("/#([A-Za-z ]+)/", $r, $name);
+        //     // new string  #xyz  aa type nu thay 
+        //     $new[] = $name[1];
+        // }
+        // return $new;
+        
+            $matches = array();
+            // Looks for @[First Name Last Name](Username)
+            preg_match_all("/#\[[A-Za-z0-9]+\]\([A-Za-z0-9_]+\)/", $content, $matches);
+    
+            $usernames = array();
+    
+            // Once we have our matches, let's get the username.
+            foreach($matches[0] as $r) {
+                // Grab userid
+                preg_match("/[A-Za-z0-9 ]+/", $r, $userid);
+    
+                $usernames[] = $userid[1];
+            }
+    
+            $CI =& get_instance();
+    
+            // Check all users
+            $users = array();
+            foreach($usernames as $username) {
+                $user = $CI->user_model->get_user_by_username($username);
+                if($user->num_rows() == 0) {
+                    // Replace the content to nothing
+                    $content = preg_replace("/@\[[A-Za-z ]+\]\(".$username."+\)/", "", $content);
+                } else {
+                    $user = $user->row();
+                    if($user->tag_user) {
+                        $flag = $this->check_friend($CI->user->info->ID, $user->ID);
+                        if(!$flag['friend_flag']) {
+                            $content = preg_replace("/@\[[A-Za-z ]+\]\(".$username."+\)/", $user->first_name . " " . $user->last_name, $content);
+                        } else {
+                            $users[] = $user;
+                        }
+                    } else {
+                        $users[] = $user;
+                    }
+                }
+            }
+            return array("content" => $content, "users" => $users);
+        
+
     }
 
 
@@ -372,7 +430,7 @@ class Common
 
     public function replace_hashtags($content) 
     {
-        $content = preg_replace_callback("/(^|[ ])#[A-Za-z0-9_-]+/", 
+        $content = preg_replace_callback("/#\[[A-Za-z ]+\]\([A-Za-z0-9_]+\)/", 
             array(&$this, "replace_hashtags_cb"), $content);
         return $content;
     }
@@ -383,9 +441,12 @@ class Common
 
             // Grab hashtag
             $name ="";
-            preg_match("/(^|[ ])#([A-Za-z0-9-_]+)/", $m, $name);
-
-            if(!isset($name[2])) {
+            $userid = 0; // Actually username
+            preg_match("/#\[([A-Za-z ]+)\]/", $m, $name);
+            preg_match("/\(([A-Za-z0-9]+)\)/", $m, $userid);
+            
+            
+            if(!isset($name[1])) {
                 return "";
             }
             $space = "";
@@ -393,14 +454,44 @@ class Common
                 $space = $name[1];
             }
 
-            $text = $space . '<a href="'.site_url("home/index/1/" . $name[2]).'">#' . $name[2] . '</a>';
+            $text = '<a href="'.site_url("home/index/1/" . $name[1]).'">#' . $name[1] . '</a>';
+            return $text;
+        }
+    }
+    public function replace_hashtags_editor($content) 
+    {
+        $content = preg_replace_callback("/#\[[A-Za-z ]+\]\([A-Za-z0-9_]+\)/", 
+            array(&$this, "replace_hashtags_editor_cb"), $content);
+        return $content;
+    }
+
+    public function replace_hashtags_editor_cb($matches) 
+    {
+        foreach($matches as $m) {
+
+            // Grab hashtag
+            $name ="";
+            $userid = 0; // Actually username
+            preg_match("/#\[([A-Za-z ]+)\]/", $m, $name);
+            preg_match("/\(([A-Za-z0-9]+)\)/", $m, $userid);
+            
+            
+            if(!isset($name[1])) {
+                return "";
+            }
+            $space = "";
+            if(isset($name[1])) {
+                $space = $name[1];
+            }
+
+            $text = '#' . $name[1] ;
             return $text;
         }
     }
 
     public function replace_user_tags($content) 
     {
-        $content = preg_replace_callback("/@\[[A-Za-z ]+\]\([A-Za-z0-9_]+\)/", 
+        $content = preg_replace_callback("/@\[[\s+A-Za-z0-9_]+\]\([A-Za-z0-9_]+\)/", 
             array(&$this, "replace_user_tags_cb"), $content);
         return $content;
     }
@@ -412,7 +503,7 @@ class Common
             // Grab userid
             $name ="";
             $userid = 0; // Actually username
-            preg_match("/@\[([A-Za-z ]+)\]/", $m, $name);
+            preg_match("/@\[([\s+A-Za-z0-9_]+)\]/", $m, $name);
             preg_match("/\(([A-Za-z0-9]+)\)/", $m, $userid);
 
             if(!isset($name[1])) {
@@ -672,5 +763,3 @@ class Common
     }
 
 }
-
-?>

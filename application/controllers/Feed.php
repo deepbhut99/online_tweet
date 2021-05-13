@@ -27,20 +27,15 @@ class Feed extends CI_Controller
 		$youtube_url = $this->common->nohtml($this->input->post("youtube_url"));
 
 		$targetid = intval($this->input->post("targetid"));
-
-		
 		$target_type = $this->common->nohtml($this->input->post("target_type"));
-	  
+
 		$with_users = ($this->input->post("with_users"));
 		$post_as = $this->common->nohtml($this->input->post("post_as"));
 
 
-		$content = $this->common->get_user_tag_usernames($content);
-		$s = $this->common->get_user_hashtag($content);
-		
-		$content = $s['content'];
-		$tagged_users = $s['users'];
-
+		$c = $this->common->get_user_tag_usernames($content);
+		$content = $c['content'];
+		$tagged_users = $c['users'];
 
 		$location = $this->common->nohtml($this->input->post("location"));
 
@@ -121,17 +116,7 @@ class Feed extends CI_Controller
 		} elseif (isset($_FILES['image_file']['size']) && $_FILES['image_file']['size'] > 0) {
 			$this->load->library("upload");
 			// Upload image
-			// $config = array(
-			// 	"upload_path" => $this->settings->info->upload_path,
-			// 	"overwrite" => FALSE,
-			// 	"allowed_types" => "image/jpeg",
-			// 	"max_filename" => 300,
-			// 	"encrypt_name" => TRUE,
-			// 	"remove_spaces" => TRUE,
-			// 	"max_size" => $this->settings->info->file_size,
-			// );
-			// $this->upload->initialize($config
-			// );
+
 			$files_added = array();
 
 			$files = $_FILES;
@@ -145,10 +130,10 @@ class Feed extends CI_Controller
 
 				$config['upload_path'] = './uploads/';
 				$config['allowed_types'] = 'gif|jpg|png';
-				$config['max_size'] = 0; //  here it is 2 MB
+				$config['max_size'] =$this->settings->info->file_size; //  here it is 2 MB
 				$config['encrypt_name'] = TRUE;
-
 				$this->upload->initialize($config);
+
 				if (!$this->upload->do_upload('image_file')) {
 					$error = array('error' => $this->upload->display_errors());
 
@@ -205,11 +190,9 @@ class Feed extends CI_Controller
 						"file_size" => $data['file_size'],
 						"userid" => $this->user->info->ID,
 						"timestamp" => time(),
-						"filed_id" => $fileid,
 						"albumid" => $albumid
 					)
 				);
-
 				// Update album count
 				$this->image_model->increase_album_count($albumid);
 				$files_added[] = $fileid;
@@ -236,37 +219,39 @@ class Feed extends CI_Controller
 		} elseif (isset($_FILES['video_file']['size']) && $_FILES['video_file']['size'] > 0) {
 			$this->load->library("upload");
 			// Upload image
-			$this->upload->initialize(array(
-			   "upload_path" => $this->settings->info->upload_path,
-		       "overwrite" => FALSE,
-		       "max_filename" => 300,
-		       "encrypt_name" => TRUE,
-		       "remove_spaces" => TRUE,
-		       "allowed_types" => "avi|mp4|webm|ogv|ogg|3gp|flv",
-		       "max_size" => $this->settings->info->file_size,
+			$this->upload->initialize(
+				array(
+					"upload_path" => $this->settings->info->upload_path,
+					"overwrite" => FALSE,
+					"max_filename" => 300,
+					"encrypt_name" => TRUE,
+					"remove_spaces" => TRUE,
+					"allowed_types" => "avi|mp4|webm|ogv|ogg|3gp|flv",
+					"max_size" => $this->settings->info->file_size,
 				)
 			);
 
-			if ( ! $this->upload->do_upload('video_file'))
-            {
-                    $error = array('error' => $this->upload->display_errors());
+			if (!$this->upload->do_upload('video_file')) {
+				$error = array('error' => $this->upload->display_errors());
 
-                    $this->template->jsonError(lang("error_97") . "<br /><br />" .
-                    	 $this->upload->display_errors() . "<br />" . mime_content_type($_FILES['video_file']['tmp_name']));
-            }
+				$this->template->jsonError(lang("error_97") . "<br /><br />" .
+					$this->upload->display_errors() . "<br />" . mime_content_type($_FILES['video_file']['tmp_name']));
+			}
 
-            $data = $this->upload->data();
+			$data = $this->upload->data();
 
-            $videoid = $this->feed_model->add_video(array(
-            	"file_name" => $data['file_name'],
-            	"file_type" => $data['file_type'],
-            	"extension" => $data['file_ext'],
-            	"file_size" => $data['file_size'],
-            	"userid" => $this->user->info->ID,
-            	"timestamp" => time()
-            	)
-            );
+			$videoid = $this->feed_model->add_video(
+				array(
+					"file_name" => $data['file_name'],
+					"file_type" => $data['file_type'],
+					"extension" => $data['file_ext'],
+					"file_size" => $data['file_size'],
+					"userid" => $this->user->info->ID,
+					"timestamp" => time()
+				)
+			);
 		}
+
 
 		if (empty($content) && $fileid == 0 && $videoid == 0) {
 			$this->template->jsonError(lang("error_98"));
@@ -425,16 +410,6 @@ class Feed extends CI_Controller
 				"userid" => $this->user->info->ID
 			)
 		);
-		foreach ($files_added as $fileid) {
-			$this->feed_model->feed_image_multi_post(
-				array(
-					"post_id" => $postid,
-					"image_id" => $fileid
-				)
-			);
-		}
-
-
 		foreach ($sites as $site) {
 			$this->feed_model->add_feed_site(
 				array(
@@ -449,7 +424,7 @@ class Feed extends CI_Controller
 
 		foreach ($tagged_users as $user) {
 			// Notification
-			$this->feed_model->add_tagged_user(
+			$this->feed_model->add_tagged_users(
 				array(
 					"userid" => $user->ID,
 					"postid" => $postid
@@ -512,6 +487,17 @@ class Feed extends CI_Controller
 					"email_notification" => $user->email_notification
 				)
 			);
+		}
+
+		if (isset($_FILES['image_file']['size']) && $_FILES['image_file']['size'] > 0) {
+			foreach ($files_added as $fileid) {
+				$this->feed_model->feed_image_multi_post(
+					array(
+						"post_id" => $postid,
+						"image_id" => $fileid
+					)
+				);
+			}
 		}
 
 		//$this->session->set_flashdata("globalmsg", "Post posted!");
@@ -1658,7 +1644,72 @@ class Feed extends CI_Controller
 		);
 		exit();
 	}
+	public function get_share_post($id, $hash)
+	{
+		if ($hash != $this->security->get_csrf_hash()) {
+			$this->template->jsonError(lang("error_6"));
+		}
+		$id = intval($id);
+		$post = $this->feed_model->get_post($id, $this->user->info->ID);
+		if ($post->num_rows() == 0) {
+			$this->template->jsonError(lang("error_105"));
+		}
+		$post = $post->row();
+		$targetid = $this->user->info->ID;
+		$share_count = $post->share_count + 1;
+		$postid = $this->feed_model->update_post(
+			$id,
+			array(
+				"share_count" => $share_count,
+			)
+		);
 
+		if (!empty($post->share_id)) {
+			$share_id = $post->share_id;
+			$$share_id = intval($share_id);
+			$post = $this->feed_model->get_post($share_id, $this->user->info->ID);
+			if ($post->num_rows() == 0) {
+				$this->template->jsonError(lang("error_105"));
+			}
+			$post = $post->row();
+			$share_count = $post->share_count + 1;
+			$this->feed_model->update_post(
+				$share_id,
+				array(
+					"share_count" => $share_count
+				)
+			);
+			$postid = $this->feed_model->add_post(
+				array(
+					"userid" => $targetid,
+					"timestamp" => time(),
+					"share_id" => $share_id
+
+				)
+			);
+		} else {
+
+			$share_count = $post->share_count + 1;
+			$postid = $this->feed_model->add_post(
+				array(
+					"userid" => $targetid,
+					"timestamp" => time(),
+					"share_id" => $id
+
+				)
+			);
+		}
+
+
+
+		echo json_encode(
+			array(
+				"success" => 1,
+
+			)
+		);
+		exit();
+	}
 	public function subscribe_post($id, $hash)
 	{
 		if ($hash != $this->security->get_csrf_hash()) {

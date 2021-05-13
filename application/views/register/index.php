@@ -144,7 +144,7 @@
 
 				<?php if (!$this->settings->info->disable_social_login) : ?>
 					<div class="text-center decent-margin-top">
-						<div class="btn-group">
+						<!-- <div class="btn-group">
 							<a href="<?php echo site_url("login/twitter_login") ?>" class="btn btn-default">
 								<img src="<?php echo base_url() ?>images/social/twitter.png" height="20" class='social-icon' />
 								Twitter</a>
@@ -160,7 +160,7 @@
 							<a href="<?php echo site_url("login/google_login") ?>" class="btn btn-default">
 								<img src="<?php echo base_url() ?>images/social/google.png" height="20" class='social-icon' />
 								Google</a>
-						</div>
+						</div> -->
 					</div>
 				<?php endif; ?>
 

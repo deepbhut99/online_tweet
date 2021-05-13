@@ -155,7 +155,8 @@ if ($r->post_as == "page") {
 			// 	exit(0);
 			?>
 			<div class="post-image <?php echo $r->ID ?>">
-				<?php foreach ($images->result() as $rr) : ?>
+
+				<?php foreach ($images->result() as $key => $rr) : ?>
 
 					<?php $count = count($images->result_object)  ?>
 					<?php if (!empty($rr->file_name) &&  $count == 1) : ?>
@@ -165,7 +166,8 @@ if ($r->post_as == "page") {
 
 						<!-- multi-post -->
 
-					<?php elseif ($count > 2) : ?>
+					<?php elseif ($count > 1) : ?>
+
 						<?php if (isset($rr->albumid)) : ?>
 							<?php $r->albumid = $rr->albumid;
 							$r->album_name = $rr->album_name; ?>
@@ -220,30 +222,6 @@ if ($r->post_as == "page") {
 
 
 
-
-
-				<div class="like-wrapper" id="<?php echo $r->ID ?>">
-					<a class="like-button <?php if (isset($r->likeid)) : ?>is-active<?php endif; ?>" id="like-button-<?php echo $r->ID ?>" onclick="like_feed_post(<?php echo $r->ID ?>)">
-						<i class="mdi mdi-heart not-liked bouncy"></i>
-						<i class="mdi mdi-heart is-liked bouncy"></i>
-						<span class="like-overlay"></span>
-					</a>
-				</div>
-
-
-
-
-				<div class="fab-wrapper is-share">
-					<a href="javascript:void(0);" class="small-fab share-fab modal-trigger" onclick="load_comments(<?php echo $r->ID ?>)" data-modal="share-modal">
-
-						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-circle">
-							<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-						</svg>
-
-
-					</a>
-				</div>
-
 				<!-- <div class="fab-wrapper is-comment">
 					<a href="javascript:void(0);" class="small-fab">
 						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link-2">
@@ -276,6 +254,40 @@ if ($r->post_as == "page") {
 
 			</div>
 			<!-- Post statistics -->
+
+
+			<div class="fab-wrapper is-share">
+				<a href="javascript:void(0);" class="small-fab share-fab modal-trigger" onclick="share_post(<?php echo $r->ID ?>)" data-modal="share-modal">
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link-2">
+						<path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path>
+						<line x1="8" y1="12" x2="16" y2="12"></line>
+					</svg>
+				</a>
+			</div>
+
+
+
+			<div class="like-wrapper" id="<?php echo $r->ID ?>">
+				<a class="like-button <?php if (isset($r->likeid)) : ?>is-active<?php endif; ?>" id="like-button-<?php echo $r->ID ?>" onclick="like_feed_post(<?php echo $r->ID ?>)">
+					<i class="mdi mdi-heart not-liked bouncy"></i>
+					<i class="mdi mdi-heart is-liked bouncy"></i>
+					<span class="like-overlay"></span>
+				</a>
+			</div>
+
+
+
+
+			<div class="fab-wrapper is-comment">
+				<a href="javascript:void(0);" class="small-fab share-fab modal-trigger" onclick="load_comments(<?php echo $r->ID ?>)">
+
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-circle">
+						<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+					</svg>
+
+
+				</a>
+			</div>
 			<div class="social-count">
 				<div class="likes-count">
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-heart">
@@ -286,16 +298,22 @@ if ($r->post_as == "page") {
 
 
 				</div>
+			
 
-				<!-- <div class="shares-count">
-				<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-circle"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-				
-					<span>9</span>
-				</div>
 				<div class="comments-count">
-					<i data-feather="message-circle"></i>
-					<span>3</span>
-				</div> -->
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-circle">
+						<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+					</svg>
+					<span> <a href="javascript:void(0)" onclick="load_comments(<?php echo $r->ID ?>)" ><span id="feed-comments-<?php echo $r->ID ?>"> <?php echo $r->comments ?></span></a></span>
+				</div>
+				<div class="shares-count">
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link-2">
+						<path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path>
+						<line x1="8" y1="12" x2="16" y2="12"></line>
+					</svg>
+					<span id="feed-share-<?php echo $r->ID ?>" ><?php echo $r->share_count ?></span>
+				</div>
+				
 			</div>
 		</div>
 
@@ -307,6 +325,7 @@ if ($r->post_as == "page") {
 
 
 	</div>
+
 	<!-- /Main wrap -->
 
 	<!-- Post #1 Comments -->
