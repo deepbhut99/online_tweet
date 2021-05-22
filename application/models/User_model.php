@@ -13,6 +13,7 @@ class User_Model extends CI_Model
 	{
 		return $this->db->where("ID", $userid)->get("users");
 	}
+	
 
 	public function get_user_by_username($username) 
 	{
@@ -110,12 +111,13 @@ class User_Model extends CI_Model
 			"users.first_name",
 			"users.last_name",
 			"user_roles.name",
-			"users.email"
+			"users.email",
+			"users.post_count"
 			)
 		);
 
 		return $this->db->select("users.username, users.email, users.first_name, 
-			users.last_name, users.ID, users.joined, users.oauth_provider,
+			users.last_name, users.ID, users.joined,users.point_count, users.oauth_provider,
 			users.user_role, users.online_timestamp, users.avatar,
 			user_roles.name as user_role_name")
 		->join("user_roles", "user_roles.ID = users.user_role", 
@@ -812,9 +814,14 @@ class User_Model extends CI_Model
 		return $this->db->where("userid", $id)->get("user_videos");
 		
     }
+	public function update_user_point($userid, $data) {
+		$this->db->where("ID", $userid)->update("users", $data);
+	}
 
-
-
+	public function get_v_singlepoint() 
+	{
+		return $this->db->get("site_settings");
+	}
 
 
 }

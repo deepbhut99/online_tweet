@@ -14,7 +14,7 @@
   <link href="<?php echo base_url(); ?>bootstrap/css/bootstrap-theme.min.css" rel="stylesheet" media="screen">
 
   <link href="<?php echo base_url(); ?>scripts/libraries/mention/jquery.mentions.css" rel="stylesheet" type="text/css">
-
+  
 
   <!-- new css file path -->
 
@@ -63,6 +63,8 @@
   <script src="<?php echo base_url(); ?>scripts/libraries/mention/jquery.mentions.js"></script> <!-- @mentions and #hastags -->
 
 
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
 
 
   <script src="<?php echo base_url(); ?>scripts/libraries/jquery.jscroll.js"></script> <!-- infinite scroll -->
@@ -109,6 +111,7 @@
   <!-- Favicon: http://realfavicongenerator.net -->
   <link rel="shortcut icon" href="<?php echo base_url() ?>images/favicon/favicon.ico" type="image/x-icon">
   <meta name="theme-color" content="#ffffff">
+
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -183,7 +186,7 @@
                 </ul>
 
               </li>
-              <li class="user_bit"><img src="<?php echo base_url() ?><?php echo $this->settings->info->upload_path_relative ?>/<?php echo $this->user->info->avatar ?>" class="user_avatar"> <a href="javascript:void(0)" class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><?php if ($this->settings->info->user_display_type) : ?>
+              <li class="user_bit"><img src="<?php echo base_url() ?><?php echo $this->settings->info->upload_path_relative ?>/default.png" class="user_avatar"> <a href="javascript:void(0)" class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"><?php if ($this->settings->info->user_display_type) : ?>
                     <?php echo $this->user->info->first_name ?> <?php echo $this->user->info->last_name ?>
                   <?php else : ?>
                     <?php echo $this->user->info->username ?>
@@ -226,23 +229,89 @@
     <!-- Navbar mobile menu -->
     <div class="navbar-menu">
       <!-- Account -->
+
+    </div>
+    <div class="navbar-burger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <div class="navbar-menu">
+      <!-- Account -->
+      <div class="navbar-item has-dropdown is-active">
+        <div class="navbar-link">
+        <img src="<?php echo base_url() ?>/<?php echo $this->settings->info->upload_path_relative ?>/<?php echo $this->user->info->avatar ?>" data-demo-src="" data-user-popover="0" alt="">
+         <span class="is-heading"> <a href="<?php echo site_url("profile/" . $this->user->info->username) ?>"><?php echo $this->user->info->first_name ?> <?php echo $this->user->info->last_name ?></a>
+       </span>
+        </div>
+
+        <!-- Mobile Dropdown -->
+        <div class="navbar-dropdown">
+        <a href="<?php echo site_url() ?>" class="navbar-item is-flex is-mobile-icon">
+            <span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-hexagon">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+              </svg>Home</span>
+          </a>
+          <a href="<?php echo site_url("profile/" . $this->user->info->username) ?>" class="navbar-item is-flex is-mobile-icon">
+            <span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>Profile</span>
+          </a>
+
+        
+          <a href="<?php echo site_url("user_settings") ?>" class="navbar-item is-flex is-mobile-icon">
+            <span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-settings">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+              </svg>Settings</span>
+          </a>
+          <a href="<?php echo site_url("login/logout/" . $this->security->get_csrf_hash()) ?>" class="navbar-item is-flex is-mobile-icon">
+            <span><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-hexagon">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+              </svg><?php echo lang("ctn_149") ?></span>
+          </a>
+        </div>
+      </div>
+
+      <!-- More -->
+      
     </div>
   </nav>
+
   <!-- navigation panal end -->
 
   <div class="view-wrapper is-full">
-    
+
 
     <?php include(APPPATH . "views/client/client_links.php") ?>
     <!-- Container -->
     <div id="main-feed" class="container">
       <?php $gl = $this->session->flashdata('globalmsg'); ?>
       <?php if (!empty($gl)) : ?>
-        <div class="row">
-          <div class="col-md-12">
-            <div class="alert alert-success"><b><span class="glyphicon glyphicon-ok"></span></b> <?php echo $this->session->flashdata('globalmsg') ?></div>
-          </div>
-        </div>
+        <script>
+						$(function() {
+							// Display a error toast, with a title
+							toastr.options = {
+								"closeButton": true,
+								"debug": false,
+								"progressBar": true,
+								"preventDuplicates": true,
+								"positionClass": "toast-top-right",
+								"onclick": null,
+								"showDuration": "400",
+								"hideDuration": "1000",
+								"timeOut": "7000",
+								"extendedTimeOut": "1000",
+								"showEasing": "swing",
+								"hideEasing": "linear",
+								"showMethod": "fadeIn",
+								"hideMethod": "fadeOut"
+							}
+							toastr.error('<?php echo $gl ?>')
+             
+						});
+					</script>
       <?php endif; ?>
 
 
@@ -265,7 +334,7 @@
   <!-- new SCRIPT for theme -->
 
   <!-- Core js -->
-  
+
 
   <!-- Page and UI related js -->
 

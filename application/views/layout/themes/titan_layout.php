@@ -20,6 +20,8 @@
         <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,500,550,600,700' rel='stylesheet' type='text/css'>
         <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
 
+
+
         <!-- SCRIPTS -->
         <script type="text/javascript">
         var global_base_url = "<?php echo site_url('/') ?>";
@@ -61,6 +63,7 @@
         <link rel="manifest" href="<?php echo base_url() ?>images/favicon/manifest.json">
         <link rel="mask-icon" href="<?php echo base_url() ?>images/favicon/safari-pinned-tab.svg" color="#5bbad5">
         <meta name="theme-color" content="#ffffff">
+        
 
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->

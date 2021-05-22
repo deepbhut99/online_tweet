@@ -26,6 +26,19 @@ function load_notifications() {
 }
 
 
+$('.navbar-burger').on("click", function() {
+    $(this).toggleClass('is-active');
+
+    if ($('.navbar-menu').hasClass('is-active')) {
+        $('.navbar-menu').removeClass('is-active');
+    } else {
+        $('.navbar-menu').addClass('is-active');
+    }
+});
+
+
+
+
 var chat_page = 0;
 
 function load_chats() {
@@ -186,7 +199,30 @@ $(document).ready(function() {
 
         return false;
     });
+    // deep
+    // $('#social-com-form-edit').submit(function() {
 
+    //     $(this).ajaxSubmit({
+    //         success: post_comment,
+    //         dataType: 'json',
+    //         clearForm: false
+    //     });
+
+    //     return false;
+    // });
+
+    // function post_comment(msg) {
+    //     if (msg.error) {
+    //         alert(msg.error_msg);
+    //         return;
+    //     }
+    //     $('#social-com-form-edit').clearForm();
+
+    //     // reload feed
+    //     load_posts_wrapper();
+    // }
+
+    // deep
     $('.map_name').geocomplete();
 
     $('#home_posts').on("focus", ".feed-comment-input", function() {
@@ -230,7 +266,7 @@ $(document).ready(function() {
                             $('#feed-comments-spot-' + id).html(msg.content);
                             $('#feed-comments-' + id).html(msg.comments);
                             $('#feed-comments-share-' + id).html(msg.comments);
-                            load_posts_wrapper();
+
 
 
                         }
@@ -295,6 +331,13 @@ $(document).ready(function() {
 
 });
 
+
+$(document).ready(function() {
+    $(".feed-comment-input").mentionsInput({ trigger: "#@", source: global_base_url + 'home/get_user_friends' });
+
+
+});
+
 function editPostComplete(data) {
     $('#editPostModal').modal('hide');
     $('#feed-post-' + data.id).replaceWith(data.post);
@@ -335,7 +378,7 @@ $(document).ready(function() {
         });
     }
 
-    initAutoTag(); //Close selection modal
+
 
     $('.new-story-modal .selection-box').on('click', function() {
         $(this).closest('.modal').removeClass('is-active');
@@ -438,6 +481,16 @@ $(document).ready(function() {
         });
     }
 });
+
+$(document).ready(function() {
+    $('.mobile-sidebar-trigger-left').on('click', function() {
+        $('.story-post-sidebar').removeClass('is-hidden-mobile');
+    });
+    $('.close-stories-post-sidebar').on('click', function() {
+        $('.story-post-sidebar').addClass('is-hidden-mobile');
+    });
+
+});
 var global_page = 0;
 var hide_prev = 0;
 
@@ -471,6 +524,19 @@ function get_post_likes(id) {
     })
 }
 
+function get_point_allm() {
+    $.ajax({
+        url: global_base_url + 'admin/get_point_allm/',
+        type: 'GET',
+        data: {
+
+        },
+        success: function(msg) {
+
+        }
+    })
+}
+
 function load_comments(id) {
     if ($('#feed-comment-' + id).is(':visible')) {
         $('#feed-comment-' + id).slideUp(400);
@@ -485,7 +551,7 @@ function load_comments(id) {
             success: function(msg) {
                 $('#feed-comment-' + id).html(msg);
                 $('#feed-comment-' + id).slideDown(400);
-                $(".feed-comment-input").mentionsInput({ trigger: "#@", source: global_base_url + 'home/get_user_friends_comment' });
+                $("#feed-comment-input").mentionsInput({ trigger: "#@", source: global_base_url + 'home/get_user_friends_comment' });
             }
         });
     }
@@ -506,7 +572,7 @@ function load_single_comment(id, commentid, replyid) {
             success: function(msg) {
                 $('#feed-comment-' + id).html(msg);
                 $('#feed-comment-' + id).slideDown(400);
-                $(".feed-comment-input").mentionsInput({ source: global_base_url + 'home/get_user_friends' });
+                $("#feed-comment-input").mentionsInput({ source: global_base_url + 'home/get_user_friends' });
                 if (replyid > 0) {
                     load_comment_replies(commentid, replyid);
                 }
@@ -530,7 +596,8 @@ function delete_comment(id) {
                 return;
             }
             if (msg.success) {
-                $('#feed-comment-area-' + id).fadeOut(500);
+                $('#feed-post-com-' + id).fadeOut(500);
+
             }
         }
     })
@@ -551,6 +618,7 @@ function delete_comment_reply(id) {
             }
             if (msg.success) {
                 $('#comment-reply-' + id).fadeOut(500);
+                load_posts_wrapper();
             }
         }
     })
@@ -616,9 +684,9 @@ function like_comment(id) {
                 return;
             }
             if (msg.like_status) {
-                $('#comment-like-link-' + id).addClass("active-comment-like");
+                $('#comment-like-button-' + id).addClass("is-active");
             } else {
-                $('#comment-like-link-' + id).removeClass("active-comment-like");
+                $('#comment-like-button-' + id).removeClass("is-active");
             }
             var like_icon = '';
             if (msg.likes > 0) {
@@ -691,6 +759,22 @@ function edit_post(id) {
     })
 }
 // deep made 
+function comments(id) {
+    $.ajax({
+        url: global_base_url + 'feed/comments/' + id,
+        type: 'GET',
+        data: {},
+        success: function(msg) {
+            // Load modal
+
+            $('#share-modal').modal('show');
+            $('#share-model-1').html(msg);
+            //$("#editor-textarea").mentionsInput("destroy");
+
+
+        }
+    })
+}
 
 
 
@@ -707,6 +791,7 @@ function delete_post(id) {
             }
             if (msg.success) {
                 $('#feed-post-' + id).fadeOut(500);
+                load_posts_wrapper();
             }
         }
     })
@@ -794,3 +879,26 @@ function edit_smile($text) {
     $('.edit-editor-textarea').val($('.edit-editor-textarea').val() + " " + $text);
     $('.edit-editor-textarea').trigger('change');
 }
+
+$(".numbers").keypress(function(e) {
+    //if the letter is not digit then display error and don't type anything
+    if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+        //display error message
+        return false;
+    }
+});
+
+var words = "";
+$(function() {
+    $("#con_p1, #con_p2").on("keydown keyup", per);
+
+    function per() {
+        var totalamount = (
+            Number($("#con_p1").val()) * Number($("#con_p2").val())
+        );
+        $("#total_v").text(totalamount);
+        $("#total_v_f").text(totalamount);
+        // words = toWords(totalamount);
+        // $("#amount-rupees").val(words + "Rupees Only");
+    }
+});

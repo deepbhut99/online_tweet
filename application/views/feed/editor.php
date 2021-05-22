@@ -3,7 +3,7 @@
 if (isset($postAs)) {
   $imgurl = base_url() . "/" . $this->settings->info->upload_path_relative . "/" . $postAsImg;
 } else {
-  $imgurl = base_url() . "/" . $this->settings->info->upload_path_relative . "/" . $this->user->info->avatar;
+  $imgurl = base_url() . "/" . $this->settings->info->upload_path_relative . "/default.png";
 }
 
 ?>
@@ -212,7 +212,7 @@ if (isset($postAs)) {
   <div class="modal-background"></div>
   <div class="modal-content" id="share-model-1">
 
-   
+
 
   </div>
 </div>

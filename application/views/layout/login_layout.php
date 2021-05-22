@@ -11,7 +11,6 @@
 
     <!-- Styles -->
     <link href="<?php echo base_url(); ?>styles/login_layout.css" rel="stylesheet" type="text/css">
-    <link href="<?php echo base_url(); ?>styles/responsive.css" rel="stylesheet" type="text/css">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,500,600,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
 
@@ -25,7 +24,7 @@
 
     <!-- new script -->
 
-   
+
     <meta http-equiv="x-ua-compatible" content="ie=edge">
 
     <!-- Fonts -->
@@ -36,12 +35,15 @@
     <link rel="stylesheet" href="<?php echo base_url() ?>assets/css/app.css">
     <link rel="stylesheet" href="<?php echo base_url() ?>assets/css/core.css">
 
-    <link href="<?= base_url('assets/css/login.css')?>" rel="stylesheet" type="text/css">
+    <link href="<?= base_url('assets/css/login.css') ?>" rel="stylesheet" type="text/css">
 
 
 
+    <!-- aaaa chh login mateni -->
 
 
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
 
 
     <!-- Favicon: http://realfavicongenerator.net -->
@@ -73,26 +75,42 @@
 
 <body>
 
-    
-
-            <?php if ($this->settings->info->install) : ?>
-
-            <?php endif; ?>
-            <?php $gl = $this->session->flashdata('globalmsg'); ?>
-            <?php if (!empty($gl)) : ?>
-                <div class="container projects-wrap">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="alert alert-success"><b><span class="glyphicon glyphicon-ok"></span></b> <?php echo $this->session->flashdata('globalmsg') ?></div>
-                        </div>
-                    </div>
-                </div>
-            <?php endif; ?>
-
-            <?php echo $content ?>
 
 
-     
+    <?php if ($this->settings->info->install) : ?>
+
+    <?php endif; ?>
+    <?php $gl = $this->session->flashdata('globalmsg'); ?>
+    <?php if (!empty($gl)) : ?>
+        <script>
+            $(function() {
+                // Display a error toast, with a title
+                toastr.options = {
+                    "closeButton": true,
+                    "debug": false,
+                    "progressBar": true,
+                    "preventDuplicates": true,
+                    "positionClass": "toast-top-right",
+                    "onclick": null,
+                    "showDuration": "400",
+                    "hideDuration": "1000",
+                    "timeOut": "7000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                }
+                toastr.success('<?php echo $gl ?>')
+
+            });
+        </script>
+    <?php endif; ?>
+
+    <?php echo $content ?>
+
+
+
 
 
 

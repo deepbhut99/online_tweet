@@ -69,7 +69,7 @@
 		<div class="form-group">
 			<label for="p-in" class="col-md-4 label-heading"><?php echo lang("ctn_499") ?></label>
 			<div class="col-md-8">
-				<input type="file" class="form-control" name="image_file">
+			<input type="file" class="form-control" name="image_file[]" multiple>
 			</div>
 		</div>
 		<div class="form-group">

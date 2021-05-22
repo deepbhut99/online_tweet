@@ -403,6 +403,12 @@ class Admin_Model extends CI_Model
 
 		return $datatable->get("reports");
 	}
+	public function user_details() 
+	{
+		return $this->db->select("users.ID") ->get("users");
+	}
+
+
 }
 
 ?>

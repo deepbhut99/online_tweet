@@ -28,12 +28,12 @@ class Login extends CI_Controller
 		if ($this->user->loggedin) {
 			redirect(base_url());
 		}
-		$this->template->loadContent("login/index.php", array());
+		$this->template->loadContent("index.php", array());
 	}
 
 	public function pro($redirect="") 
 	{	
-		$this->template->set_error_view("error/login_error.php");
+		$this->template->set_error_view("index.php");
 		$this->template->set_layout("layout/login_layout.php");
 		if ($this->user_model->check_block_ip()) {
 			$this->template->error(lang("error_26"));
@@ -727,9 +727,9 @@ class Login extends CI_Controller
 	public function load_login_posts($id, $page)
 	{
 		$posts_inf = $this->login_model->get_login_feed(1, 1);
-		$sql = $this->db->last_query();
-		echo $sql;
-		exit(0);
+		// $sql = $this->db->last_query();
+		// echo $sql;
+		// exit(0);
 
 	
 	}

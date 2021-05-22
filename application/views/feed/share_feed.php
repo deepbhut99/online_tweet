@@ -281,7 +281,7 @@ if ($r->post_as == "page") {
                                             <?php $rr->albumid = $rrr->albumid;
                                             $rr->album_name = $rrr->album_name; ?>
                                         <?php endif; ?>
-                                        <li class="album-image">
+                                        <li class="album-image" id="album-image-share">
                                             <?php if (isset($rrr->file_name)) : ?>
                                                 <img src="<?php echo base_url() ?><?php echo $this->settings->info->upload_path_relative ?>/<?php echo $rrr->file_name ?>" width="140" alt="<?php echo $rrr->name . "<br>" . $rrr->description ?>">
                                             <?php endif; ?>

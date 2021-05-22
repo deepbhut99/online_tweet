@@ -32,7 +32,7 @@ if ($r->post_as == "page") {
 				<div class="user-info">
 					<?php if (isset($r->p_username)) : ?>
 						<a href="<?php echo site_url("profile/" . $r->p_username) ?>"><?php echo $r->p_first_name ?> <?php echo $r->p_last_name ?></a>
-						<span class="time">July 26 2018, 01:03pm</span>
+
 
 						<?php if ($r->user_flag) : ?> - <?php echo lang("ctn_517") ?>
 							<?php $users = $this->feed_model->get_feed_users($r->ID); ?>
@@ -298,22 +298,22 @@ if ($r->post_as == "page") {
 
 
 				</div>
-			
+
 
 				<div class="comments-count">
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-circle">
 						<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
 					</svg>
-					<span> <a href="javascript:void(0)" onclick="load_comments(<?php echo $r->ID ?>)" ><span id="feed-comments-<?php echo $r->ID ?>"> <?php echo $r->comments ?></span></a></span>
+					<span> <a href="javascript:void(0)" onclick="load_comments(<?php echo $r->ID ?>)"><span id="feed-comments-<?php echo $r->ID ?>"> <?php echo $r->comments ?></span></a></span>
 				</div>
 				<div class="shares-count">
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link-2">
 						<path d="M15 7h3a5 5 0 0 1 5 5 5 5 0 0 1-5 5h-3m-6 0H6a5 5 0 0 1-5-5 5 5 0 0 1 5-5h3"></path>
 						<line x1="8" y1="12" x2="16" y2="12"></line>
 					</svg>
-					<span id="feed-share-<?php echo $r->ID ?>" ><?php echo $r->share_count ?></span>
+					<span id="feed-share-<?php echo $r->ID ?>"><?php echo $r->share_count ?></span>
 				</div>
-				
+
 			</div>
 		</div>
 
@@ -808,6 +808,8 @@ if ($r->post_as == "page") {
 		<!-- Comments footer -->
 	</div>
 	<!-- /Post #1 Comments -->
+	
+
 </div>
 <?php if (!empty($script)) : ?>
 	<script type="text/javascript">

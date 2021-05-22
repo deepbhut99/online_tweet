@@ -1,6 +1,3 @@
-
-
-
 <div class="login-wrapper columns is-gapless">
   <!--Left Side (Desktop Only)-->
   <div class="column is-6 is-hidden-mobile hero-banner">
@@ -8,20 +5,20 @@
       <div class="hero-body">
         <div class="container">
           <div class="left-caption">
-           
+
 
             <!-- pinal nu card -->
             <div class="card mt-5">
               <div class="card-body pb-0">
                 <?php $users = $this->login_model->get_login_feed(1, 1);
-               
+
 
                 foreach ($users->result() as $rr) :
                   $rr->content = $this->common->replace_user_tags($rr->content);
                   $rr->content = $this->common->replace_hashtags($rr->content);
                   $rr->content = $this->common->convert_smiles($rr->content);
                   $script = '';
-                  
+
 
                   // $sql = $this->db->last_query();
                   // echo $sql;
@@ -37,7 +34,7 @@
                       <?php if (isset($rr->username)) : ?>
                         <h6><?php echo $rr->first_name ?> <?php echo $rr->last_name ?></h6>
                       <?php endif; ?>
-                    
+
                     </div>
 
                   </div>
@@ -68,7 +65,7 @@
                           <?php $rr->albumid = $rrr->albumid;
                           $rr->album_name = $rrr->album_name; ?>
                         <?php endif; ?>
-                        <li class="album-image">
+                        <li class="album-image-login">
                           <?php if (isset($rrr->file_name)) : ?>
                             <img src="<?php echo base_url() ?><?php echo $this->settings->info->upload_path_relative ?>/<?php echo $rrr->file_name ?>" width="140" alt="<?php echo $rrr->name . "<br>" . $rrr->description ?>">
                           <?php endif; ?>
@@ -76,7 +73,7 @@
                         </li>
                       <?php endif; ?>
                     <?php endforeach; ?>
-                   
+
 
 
                     <?php if (isset($rr->videoid)) : ?>
@@ -126,11 +123,63 @@
   <!--Right Side-->
   <div class="column is-6 center-block-e">
     <div class="hero form-hero is-fullheight">
+      <div class="account-wrapper pt-1" style="padding:25px 0;">
+        <div class="account-body">
+          <p class="logo">
+          <img src="<?php echo base_url() ?>uploads/imp/MicrosoftTeams-image.png" height="20" class='social-icon' />
+          </p>
+          <form id="data_form" autocomplete="off" method="POST" class="account-form">
+            <?php
+            if ($this->session->flashdata('error_session')) {
+            ?>
+              <div class="alert alert-danger alert-dismissible">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <?php echo $this->session->flashdata('error_session'); ?>
+              </div>
+            <?php } ?>
+
+            <?php
+            if ($this->session->flashdata('success_message')) {
+            ?>
+              <div class="alert alert-success alert-dismissible">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <span style="color: white;"><?php echo $this->session->flashdata('success_message'); ?></span>
+              </div>
+            <?php } ?>
+            <span style="color:red;font-weight: bold" id="errorMessageOnline"></span>
+            <div class="form-group">
+              <label for="sign-up"><?= lang('user_name') ?></label>
+              <input class="inputhght" name="username" id="username" type="text" value="<?= $this->session->flashdata("username") ?>" autocomplete="off" placeholder="<?= lang('uname') ?>">
+              <span id="error_user" class="errorSpan"></span>
+            </div>
+            <div class="form-group tow">
+              <label for="pass"><?= lang('l_password') ?></label>
+              <input class="inputhght" style="height: 45px;" type="password" name="password" id="lpassword" autocomplete="new-password" value="<?= $this->session->flashdata("password") ?>" placeholder="<?= lang('entr_pwd') ?>">
+              <div class="group2">
+                <i id="icon" class="fa fa-eye-slash"></i>
+              </div>
+              <span id="error_pass" class="errorSpan"></span>
+              <span class="sign-in-recovery"><?= lang('frgt_pwd') ?><a style="color: #c99728;" href="<?= base_url('login/forgot-password') ?>"><?= lang('rcvr_pwd') ?></a></span>
+            </div>
+            <div class="form-group text-center">
+              <button style="background: #c99728; outline: none !important;" type="submit" id="login_btn_Online" class="mt-2 mb-2"><span><b><?= lang('log_in') ?></b></span></button>
+            </div>
+          </form>
+        </div>
+
+        <div class="account-header pb-0">
+          <span class="d-block mt-15"><?= lang('dont_hv_acc') ?><a style="color: #c99728;" href="<?= base_url('signup') ?>"><?= lang('sign_up_here') ?></a></span>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
 
 
 
 
-      <div class="login-page">
+  <div class="login-page">
         <div class="login-page-header">
           <?php echo lang("ctn_304") ?> <?php echo $this->settings->info->site_name ?>
 
@@ -183,7 +232,3 @@
         <?php echo form_close() ?>
 
       </div>
-
-
-    </div>
-  </div>

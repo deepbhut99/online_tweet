@@ -75,11 +75,18 @@
                 </a>
               </li>
               <li>
+                <a href="<?php echo site_url("point_system/reward") ?>">
+                  
+                  <span><?php echo lang("ctn_672") ?></span>
+                </a>
+              </li>
+              <li>
                 <a href="<?php echo site_url("user_settings") ?>">
                   
                   <span><?php echo lang("ctn_156") ?></span>
                 </a>
               </li>
+              
             </ul>
           </div>
 
@@ -164,6 +171,13 @@
         <line x1="3" y1="18" x2="21" y2="18"></line>
       </svg>
     </a>
+    <a class="mobile-sidebar-trigger-left is-story-post-left is-home-left-side is-hidden-desktop" >
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+    </a>
 
     <!-- Story -->
     <div class="story-post-wrapper">
@@ -176,11 +190,16 @@
     </div>
 
     <!--Story post sidebar-->
-    <div class="story-post-sidebar">
+    <div class="story-post-sidebar is-hidden-mobile">
+    <a class="close-stories-post-sidebar is-hidden-desktop">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x" style="margin-left: 5%;margin-top: 5%;">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </a>
       <div class="header">
         <h2><?php echo lang("ctn_527") ?></h2>
       </div>
-
       <div class="related-posts">
         <?php foreach ($users->result() as $r) : ?>
           <!--Related post-->

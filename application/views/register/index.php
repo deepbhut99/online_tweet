@@ -1,175 +1,150 @@
-<div class="login-wrapper columns is-gapless">
-	<!--Left Side (Desktop Only)-->
-	<div class="column is-6 is-hidden-mobile hero-banner">
-		<div class="hero is-fullheight is-login">
-			<div class="hero-body">
-				<div class="container">
-					<div class="left-caption">
-						<h2>Join an Exciting Social Experience.</h2>
-					</div>
-				</div>
+<div class="container">
+	
+	<!--Container-->
+	<div class="login-container">
+		<div class="columns is-vcentered">
+			<div class="column is-6 image-column">
+				<!--Illustration-->
+				<img class="light-image login-image" src="assets/img/illustrations/login/login.svg" alt="">
+				<img class="dark-image login-image" src="assets/img/illustrations/login/login-dark.svg" alt="">
 			</div>
-		</div>
-	</div>
-	<!--Right Side-->
-	<div class="column is-6 center-block-e">
-		<div class="hero form-hero is-fullheight">
+			<div class="column is-6">
 
-
-			<div class="login-page">
 				<div class="login-page-header">
-					<?php echo lang("ctn_212") ?> <?php echo $this->settings->info->site_name ?>
-
+					<img src="<?php echo base_url() ?>uploads/imp/MicrosoftTeams-image.png" height="20" class='social-icon' />
 				</div>
 				<?php if (!empty($fail)) : ?>
-					<div class="alert alert-danger"><?php echo $fail ?></div>
+					<script>
+						$(function() {
+							// Display a error toast, with a title
+							toastr.options = {
+								"closeButton": true,
+								"debug": false,
+								"progressBar": true,
+								"preventDuplicates": true,
+								"positionClass": "toast-top-right",
+								"onclick": null,
+								"showDuration": "400",
+								"hideDuration": "1000",
+								"timeOut": "7000",
+								"extendedTimeOut": "1000",
+								"showEasing": "swing",
+								"hideEasing": "linear",
+								"showMethod": "fadeIn",
+								"hideMethod": "fadeOut"
+							}
+							toastr.error('<?php echo $fail ?>')
+						});
+					</script>
 				<?php endif; ?>
-
 				<?php echo form_open(site_url("register"), array("class" => "form-horizontal")) ?>
-				<div class="form-group">
+				<!--Form-->
+				<div class="login-form">
+					<div class="form-panel">
+						<div class="field">
+							<label>Full Name</label>
+							<div class="control">
+								<input type="text" class="input" name="first_name" id="name-in" placeholder="Enter your first name" value="<?php if (isset($first_name)) echo $first_name ?>">
+								<input type="text" class="input" name="last_name" id="name-in" placeholder="Enter your last name" value="<?php if (isset($last_name)) echo $last_name ?>">
 
-					<label for="email-in" class="col-md-3 label-heading"><?php echo lang("ctn_214") ?></label>
-					<div class="col-md-9">
-						<input type="email" class="form-control" id="email-in" name="email" value="<?php if (isset($email)) echo $email; ?>">
+							</div>
+						</div>
+						<div class="field">
+							<label>Email</label>
+							<div class="control">
+								<input type="text" class="input" placeholder="Enter your email address" id="email-in" name="email" value="<?php if (isset($email)) echo $email; ?>">
+							</div>
+						</div>
+						<div class="field">
+							<label>Username</label>
+							<div class="control">
+								<input type="text" class="input" placeholder="Enter your email address" id="username" name="username" value="<?php if (isset($username)) echo $username; ?>">
+								<div id="username_check"></div>
+							</div>
+						</div>
+						<div class="field">
+							<label>Password</label>
+							<div class="control">
+								<input type="password" class="input" placeholder="Enter your password" id="password-in" name="password">
+							</div>
+						</div>
+						<div class="field">
+							<label>Confirm Password</label>
+							<div class="control">
+								<input type="password" class="input" placeholder="Enter your password" id="cpassword-in" name="password2">
+							</div>
+						</div>
+
 					</div>
-				</div>
 
-				<div class="form-group">
+					<?php foreach ($fields->result() as $r) : ?>
+						<div class="form-group">
 
-					<label for="username-in" class="col-md-3 label-heading"><?php echo lang("ctn_215") ?></label>
-					<div class="col-md-6">
-						<input type="text" class="form-control" id="username" name="username" value="<?php if (isset($username)) echo $username; ?>">
-						<div id="username_check"></div>
-					</div>
-					<div class="col-md-3">
-						<input type="button" class="btn btn-default" value="<?php echo lang("ctn_210") ?>" onclick="checkUsername()" />
-					</div>
-				</div>
-
-				<div class="form-group">
-
-					<label for="password-in" class="col-md-3 label-heading"><?php echo lang("ctn_216") ?></label>
-					<div class="col-md-9">
-						<input type="password" class="form-control" id="password-in" name="password" value="">
-					</div>
-				</div>
-
-				<div class="form-group">
-
-					<label for="cpassword-in" class="col-md-3 label-heading"><?php echo lang("ctn_217") ?></label>
-					<div class="col-md-9">
-						<input type="password" class="form-control" id="cpassword-in" name="password2" value="">
-					</div>
-				</div>
-
-				<div class="form-group">
-
-					<label for="name-in" class="col-md-3 label-heading"><?php echo lang("ctn_218") ?></label>
-					<div class="col-md-9">
-						<input type="text" class="form-control" id="name-in" name="first_name" value="<?php if (isset($first_name)) echo $first_name ?>">
-					</div>
-				</div>
-				<div class="form-group">
-
-					<label for="name-in" class="col-md-3 label-heading"><?php echo lang("ctn_219") ?></label>
-					<div class="col-md-9">
-						<input type="text" class="form-control" id="name-in" name="last_name" value="<?php if (isset($last_name)) echo $last_name ?>">
-					</div>
-				</div>
-				<?php foreach ($fields->result() as $r) : ?>
-					<div class="form-group">
-
-						<label for="name-in" class="col-md-3 label-heading"><?php echo $r->name ?> <?php if ($r->required) : ?>*<?php endif; ?></label>
-						<div class="col-md-9">
-							<?php if ($r->type == 0) : ?>
-								<input type="text" class="form-control" id="name-in" name="cf_<?php echo $r->ID ?>" value="<?php if (isset($_POST['cf_' . $r->ID])) echo $_POST['cf_' . $r->ID] ?>">
-							<?php elseif ($r->type == 1) : ?>
-								<textarea name="cf_<?php echo $r->ID ?>" rows="8" class="form-control"><?php if (isset($_POST['cf_' . $r->ID])) echo $_POST['cf_' . $r->ID] ?></textarea>
-							<?php elseif ($r->type == 2) : ?>
-								<?php $options = explode(",", $r->options); ?>
-								<?php if (count($options) > 0) : ?>
-									<?php foreach ($options as $k => $v) : ?>
-										<div class="form-group"><input type="checkbox" name="cf_cb_<?php echo $r->ID ?>_<?php echo $k ?>" value="1" <?php if (isset($_POST['cf_cb_' . $r->ID . "_" . $k])) echo "checked" ?>> <?php echo $v ?></div>
-									<?php endforeach; ?>
-								<?php endif; ?>
-							<?php elseif ($r->type == 3) : ?>
-								<?php $options = explode(",", $r->options); ?>
-								<?php if (count($options) > 0) : ?>
-									<?php foreach ($options as $k => $v) : ?>
-										<div class="form-group"><input type="radio" name="cf_radio_<?php echo $r->ID ?>" value="<?php echo $k ?>" <?php if (isset($_POST['cf_radio_' . $r->ID]) && $_POST['cf_radio_' . $r->ID] == $k) echo "checked" ?>> <?php echo $v ?></div>
-									<?php endforeach; ?>
-								<?php endif; ?>
-							<?php elseif ($r->type == 4) : ?>
-								<?php $options = explode(",", $r->options); ?>
-								<?php if (count($options) > 0) : ?>
-									<select name="cf_<?php echo $r->ID ?>" class="form-control">
+							<label for="name-in" class="col-md-3 label-heading"><?php echo $r->name ?> <?php if ($r->required) : ?>*<?php endif; ?></label>
+							<div class="col-md-9">
+								<?php if ($r->type == 0) : ?>
+									<input type="text" class="form-control" id="name-in" name="cf_<?php echo $r->ID ?>" value="<?php if (isset($_POST['cf_' . $r->ID])) echo $_POST['cf_' . $r->ID] ?>">
+								<?php elseif ($r->type == 1) : ?>
+									<textarea name="cf_<?php echo $r->ID ?>" rows="8" class="form-control"><?php if (isset($_POST['cf_' . $r->ID])) echo $_POST['cf_' . $r->ID] ?></textarea>
+								<?php elseif ($r->type == 2) : ?>
+									<?php $options = explode(",", $r->options); ?>
+									<?php if (count($options) > 0) : ?>
 										<?php foreach ($options as $k => $v) : ?>
-											<option value="<?php echo $k ?>" <?php if (isset($_POST['cf_' . $r->ID]) && $_POST['cf_' . $r->ID] == $k) echo "selected" ?>><?php echo $v ?></option>
+											<div class="form-group"><input type="checkbox" name="cf_cb_<?php echo $r->ID ?>_<?php echo $k ?>" value="1" <?php if (isset($_POST['cf_cb_' . $r->ID . "_" . $k])) echo "checked" ?>> <?php echo $v ?></div>
 										<?php endforeach; ?>
-									</select>
+									<?php endif; ?>
+								<?php elseif ($r->type == 3) : ?>
+									<?php $options = explode(",", $r->options); ?>
+									<?php if (count($options) > 0) : ?>
+										<?php foreach ($options as $k => $v) : ?>
+											<div class="form-group"><input type="radio" name="cf_radio_<?php echo $r->ID ?>" value="<?php echo $k ?>" <?php if (isset($_POST['cf_radio_' . $r->ID]) && $_POST['cf_radio_' . $r->ID] == $k) echo "checked" ?>> <?php echo $v ?></div>
+										<?php endforeach; ?>
+									<?php endif; ?>
+								<?php elseif ($r->type == 4) : ?>
+									<?php $options = explode(",", $r->options); ?>
+									<?php if (count($options) > 0) : ?>
+										<select name="cf_<?php echo $r->ID ?>" class="form-control">
+											<?php foreach ($options as $k => $v) : ?>
+												<option value="<?php echo $k ?>" <?php if (isset($_POST['cf_' . $r->ID]) && $_POST['cf_' . $r->ID] == $k) echo "selected" ?>><?php echo $v ?></option>
+											<?php endforeach; ?>
+										</select>
+									<?php endif; ?>
 								<?php endif; ?>
-							<?php endif; ?>
-							<span class="help-text"><?php echo $r->help_text ?></span>
+								<span class="help-text"><?php echo $r->help_text ?></span>
+							</div>
 						</div>
+					<?php endforeach; ?>
+
+
+					<?php if (!$this->settings->info->disable_captcha) : ?>
+						<div class="form-group">
+
+							<label for="name-in" class="col-md-3 label-heading"><?php echo lang("ctn_220") ?></label>
+							<div class="col-md-9">
+								<p><?php echo $cap['image'] ?></p>
+								<input type="text" class="form-control" id="captcha-in" name="captcha" placeholder="<?php echo lang("ctn_306") ?>" value="">
+							</div>
+						</div>
+					<?php endif; ?>
+					<?php if ($this->settings->info->google_recaptcha) : ?>
+						<div class="form-group">
+
+							<label for="name-in" class="col-md-3 label-heading"><?php echo lang("ctn_220") ?></label>
+							<div class="col-md-9">
+								<div class="g-recaptcha" data-sitekey="<?php echo $this->settings->info->google_recaptcha_key ?>"></div>
+							</div>
+						</div>
+					<?php endif ?>
+					<div class="control">
+						<button type="submit" name="s" onload="myFunction()" class="button is-solid primary-button raised is-rounded is-fullwidth">Register</button>
 					</div>
-				<?php endforeach; ?>
-				<p><?php echo lang("ctn_351") ?></p>
 
-				<?php if (!$this->settings->info->disable_captcha) : ?>
-					<div class="form-group">
-
-						<label for="name-in" class="col-md-3 label-heading"><?php echo lang("ctn_220") ?></label>
-						<div class="col-md-9">
-							<p><?php echo $cap['image'] ?></p>
-							<input type="text" class="form-control" id="captcha-in" name="captcha" placeholder="<?php echo lang("ctn_306") ?>" value="">
-						</div>
+					<div class="account-link has-text-centered">
+						<a href="<?php echo site_url("login") ?>">You already have an account? Sign Up</a>
 					</div>
-				<?php endif; ?>
-				<?php if ($this->settings->info->google_recaptcha) : ?>
-					<div class="form-group">
-
-						<label for="name-in" class="col-md-3 label-heading"><?php echo lang("ctn_220") ?></label>
-						<div class="col-md-9">
-							<div class="g-recaptcha" data-sitekey="<?php echo $this->settings->info->google_recaptcha_key ?>"></div>
-						</div>
-					</div>
-				<?php endif ?>
-
-
-				<input type="submit" name="s" class="btn btn-primary form-control" value="<?php echo lang("ctn_221") ?>" />
-
-				<hr>
-
-				<p><?php echo lang("ctn_222") ?></p>
-
-				<?php if (!$this->settings->info->disable_social_login) : ?>
-					<div class="text-center decent-margin-top">
-						<!-- <div class="btn-group">
-							<a href="<?php echo site_url("login/twitter_login") ?>" class="btn btn-default">
-								<img src="<?php echo base_url() ?>images/social/twitter.png" height="20" class='social-icon' />
-								Twitter</a>
-						</div>
-
-						<div class="btn-group">
-							<a href="<?php echo site_url("login/facebook_login") ?>" class="btn btn-default">
-								<img src="<?php echo base_url() ?>images/social/facebook.png" height="20" class='social-icon' />
-								Facebook</a>
-						</div>
-
-						<div class="btn-group">
-							<a href="<?php echo site_url("login/google_login") ?>" class="btn btn-default">
-								<img src="<?php echo base_url() ?>images/social/google.png" height="20" class='social-icon' />
-								Google</a>
-						</div> -->
-					</div>
-				<?php endif; ?>
-
-				<p class="decent-margin"><a href="<?php echo site_url("login") ?>" class="btn btn-success form-control"><?php echo lang("ctn_223") ?></a></p>
-
+				</div>
 				<?php echo form_close() ?>
 			</div>
-
-
 		</div>
 	</div>
 </div>

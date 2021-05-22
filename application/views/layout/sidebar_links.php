@@ -16,7 +16,7 @@
                       <li class="<?php if(isset($activeLink['admin']['page_categories'])) echo "active" ?>"><a href="<?php echo site_url("admin/page_categories") ?>"> <?php echo lang("ctn_529") ?></a></li>
                     <?php endif; ?>
                     <?php if($this->user->info->admin || $this->user->info->admin_members) : ?>
-                    <li class="<?php if(isset($activeLink['admin']['members'])) echo "active" ?>"><a href="<?php echo site_url("admin/members") ?>"> <?php echo lang("ctn_160") ?></a></li>
+                    <li class="<?php if(isset($activeLink['admin']['members'])) echo "active" ?>" onclick="get_point_allm()"><a href="<?php echo site_url("admin/members") ?>"> <?php echo lang("ctn_160") ?></a></li>
                     <li class="<?php if(isset($activeLink['admin']['custom_fields'])) echo "active" ?>"><a href="<?php echo site_url("admin/custom_fields") ?>"> <?php echo lang("ctn_346") ?></a></li>
                     <li class="<?php if(isset($activeLink['admin']['reports'])) echo "active" ?>"><a href="<?php echo site_url("admin/reports") ?>"> <?php echo lang("ctn_530") ?></a></li>
                     <?php endif; ?>

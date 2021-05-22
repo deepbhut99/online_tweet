@@ -1211,3 +1211,33 @@ a:focus {
         transform: rotate(360deg);
     }
 }
+
+#input-sm-new {
+    width: 50% !important;
+}
+
+#input-c {
+    width: 70%;
+    margin-right: 5%;
+}
+
+#s_c {
+    width: 30%;
+    margin-right: 5%;
+}
+
+#curre_box {
+    display: inline-flex;
+}
+
+#input-c_f {
+    width: 30%;
+}
+
+#single_point_value {
+    width: 20%;
+}
+
+.v_1 {
+    display: inline-flex;
+}

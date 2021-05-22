@@ -136,12 +136,52 @@ class Login_Model extends CI_Model
     	$this->db->insert("login_attempts", $data);
     }
 
-	public function get_login_feed($id ,$page)
+	public function get_all_feed($userid, $page) 
 	{
-	
+
 		return $this->db
 			->select("feed_item.ID, feed_item.content, feed_item.post_as,
-				feed_item.timestamp, feed_item.userid, feed_item.likes,
+				feed_item.timestamp, feed_item.userid,feed_item.share_count,feed_item.share_id, feed_item.likes,
+				feed_item.comments, feed_item.location, feed_item.user_flag,
+				feed_item.profile_userid, feed_item.template, feed_item.site_flag,
+				user_images.ID as imageid, user_images.file_name as image_file_name,
+				user_images.file_url as image_file_url,
+				user_videos.ID as videoid, user_videos.file_name as video_file_name,
+				user_videos.youtube_id, user_videos.extension as video_extension,
+				users.username, users.first_name, users.last_name, users.avatar,
+				feed_likes.ID as likeid,
+				profile.username as p_username, profile.first_name as p_first_name,
+				profile.last_name as p_last_name, profile.avatar as p_avatar,
+				profile.online_timestamp as p_online_timestamp,
+				user_albums.ID as albumid, user_albums.name as album_name,
+				pages.ID as pageid, pages.name as page_name, 
+				pages.profile_avatar as page_avatar, pages.slug as page_slug,
+				calendar_events.title as event_title, calendar_events.description as event_description,
+				calendar_events.start as event_start, calendar_events.end as event_end,
+				calendar_events.location as event_location, calendar_events.ID as eventid,
+				page_users.roleid,
+				user_saved_posts.ID as savepostid,
+				feed_item_subscribers.ID as subid")
+			->join("users", "users.ID = feed_item.userid")
+			->join("user_images", "user_images.ID = feed_item.imageid", "left outer")
+			->join("user_albums", "user_albums.ID = user_images.albumid", "left outer")
+			->join("user_videos", "user_videos.ID = feed_item.videoid", "left outer")
+			->join("users as profile", "profile.ID = feed_item.profile_userid", "left outer")
+			->join("pages", "pages.ID = feed_item.pageid", "left outer")
+			->join("page_users", "page_users.pageid = feed_item.pageid AND page_users.userid = " . $userid, "LEFT OUTER")
+			->join("calendar_events", "calendar_events.ID = feed_item.eventid", "left outer")
+			->join("feed_likes", "feed_likes.postid = feed_item.ID AND feed_likes.userid = " . $userid, "LEFT OUTER")
+			->join("user_saved_posts", "user_saved_posts.postid = feed_item.ID AND user_saved_posts.userid = " . $userid, "left outer")
+			->join("feed_item_subscribers", "feed_item_subscribers.postid = feed_item.ID and feed_item_subscribers.userid = " . $userid, "LEFT OUTER")
+			->order_by("feed_item.ID", "DESC")
+			->limit(10,$page)
+			->get("feed_item");
+	}
+	public function get_single_feed($s_id,$page,$user)   
+	{ 
+		return $this->db
+		   ->select("feed_item.ID, feed_item.content, feed_item.post_as,feed_item.share_count,
+				feed_item.timestamp, feed_item.userid,feed_item.share_count, feed_item.likes,
 				feed_item.comments, feed_item.location, feed_item.user_flag,
 				feed_item.profile_userid, feed_item.template, feed_item.site_flag,
 				user_images.ID as imageid, user_images.file_name as image_file_name,
@@ -171,16 +211,14 @@ class Login_Model extends CI_Model
 			->join("user_videos", "user_videos.ID = feed_item.videoid", "left outer")
 			->join("users as profile", "profile.ID = feed_item.profile_userid", "left outer")
 			->join("pages", "pages.ID = feed_item.pageid", "left outer")
-			->join("page_users", "page_users.pageid = feed_item.pageid AND page_users.userid = " . $id, "LEFT OUTER")
+			->join("page_users", "page_users.pageid = feed_item.pageid AND page_users.userid = " . $user, "LEFT OUTER")
 			->join("calendar_events", "calendar_events.ID = feed_item.eventid", "left outer")
-			->join("feed_likes", "feed_likes.postid = feed_item.ID AND feed_likes.userid = " . $id, "LEFT OUTER")
-			->join("user_saved_posts", "user_saved_posts.postid = feed_item.ID AND user_saved_posts.userid = " . $id, "left outer")
-			->join("feed_item_subscribers", "feed_item_subscribers.postid = feed_item.ID and feed_item_subscribers.userid = " .$id, "LEFT OUTER")
-			->limit(5, $page)
-			->order_by("feed_item.ID", "DESC")
+			->join("feed_likes", "feed_likes.postid = feed_item.ID AND feed_likes.userid = " . $user, "LEFT OUTER")
+			->join("user_saved_posts", "user_saved_posts.postid = feed_item.ID AND user_saved_posts.userid = " . $user, "left outer")
+			->join("feed_item_subscribers", "feed_item_subscribers.postid = feed_item.ID and feed_item_subscribers.userid = " . $user, "LEFT OUTER")
+			
+			->where("feed_item.ID", $s_id)
 			->get("feed_item");
-	
-
 	}
 	
 	public function feed_image_multipost($id) 
@@ -194,7 +232,11 @@ class Login_Model extends CI_Model
 			->join("user_albums", "user_albums.ID = user_images.albumid")
 			->get("feed_image_multi_post");
 	}
-    
+    public function get_feed_users($id) 
+	{
+		return $this->db->where("feed_item_users.postid", $id)
+			->select("users.username, users.first_name, users.last_name")
+			->join("users", "users.ID = feed_item_users.userid")
+			->get("feed_item_users");
+	}
 }
-
-?>

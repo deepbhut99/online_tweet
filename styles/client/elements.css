@@ -704,11 +704,10 @@ table.dataTable {
 }
 
 .feed-comment-area {
-    padding-bottom: 104px !important;
-    border: 1px solid #e8e8e8;
+    border: 11px solid #f2f2f2;
     padding: 25px;
     display: none;
-    background: whitesmoke;
+    background: white;
 }
 
 .feed-comment-reply {
@@ -722,8 +721,7 @@ table.dataTable {
 }
 
 .feed-comment-m {
-    border-top: 1px solid rgba(219, 219, 219, 0.5);
-    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .feed-comment-m-part1 {
@@ -1015,4 +1013,174 @@ body {
 
 .col-md-2 {
     width: 12% !important;
+}
+
+
+/* changes 15-05-21 */
+
+.comment-like-wrapper {
+    position: relative;
+    max-height: 43px;
+    right: 210px;
+    top: 10px;
+}
+
+.comment-item-for-re {
+    margin-left: 59px;
+    position: relative;
+    margin-top: -13px;
+}
+
+.comment-like-wrapper .comment-like-button {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #fff;
+    -webkit-box-shadow: 0px 5px 43px rgb(0 0 0 / 18%);
+    box-shadow: 0px 5px 43px rgb(0 0 0 / 18%);
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    margin: 0 auto;
+    text-decoration: none;
+    opacity: 1 !important;
+    overflow: hidden;
+}
+
+.comment-like-wrapper .comment-like-button {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #fff;
+    -webkit-box-shadow: 0px 5px 43px rgb(0 0 0 / 18%);
+    box-shadow: 0px 5px 43px rgb(0 0 0 / 18%);
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    margin: 0 auto;
+    text-decoration: none;
+    opacity: 1 !important;
+    overflow: hidden;
+}
+
+.comment-like-wrapper .comment-like-button {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #fff;
+    -webkit-box-shadow: 0px 5px 43px rgb(0 0 0 / 18%);
+    box-shadow: 0px 5px 43px rgb(0 0 0 / 18%);
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    margin: 0 auto;
+    text-decoration: none;
+    opacity: 1 !important;
+    overflow: hidden;
+}
+
+.comment-like-wrapper .comment-like-button i.not-liked {
+    display: block;
+    color: #d10709;
+    position: relative;
+    z-index: 1;
+}
+
+.comment-like-wrapper .comment-like-button i.not-liked {
+    display: block;
+    color: #d10709;
+    position: relative;
+    z-index: 1;
+}
+
+.comment-like-wrapper .comment-like-button i.not-liked {
+    display: block;
+    color: #d10709;
+    position: relative;
+    z-index: 1;
+}
+
+.bouncy {
+    -webkit-animation: bouncy 0.6s;
+    animation: bouncy 0.6s;
+    -webkit-animation-duration: 0.6s;
+    animation-duration: 0.6s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+}
+
+.bouncy {
+    -webkit-animation: bouncy 0.6s;
+    animation: bouncy 0.6s;
+    -webkit-animation-duration: 0.6s;
+    animation-duration: 0.6s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+}
+
+.bouncy {
+    -webkit-animation: bouncy 0.6s;
+    animation: bouncy 0.6s;
+    -webkit-animation-duration: 0.6s;
+    animation-duration: 0.6s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+}
+
+.comment-like-wrapper .comment-like-button i.is-liked {
+    display: none;
+    color: #fff;
+    position: relative;
+    z-index: 1;
+}
+
+.comment-like-wrapper .comment-like-button i.is-liked {
+    display: none;
+    color: #fff;
+    position: relative;
+    z-index: 1;
+}
+
+.comment-like-wrapper .comment-like-button i.is-liked {
+    display: none;
+    color: #fff;
+    position: relative;
+    z-index: 1;
+}
+
+.comment-like-wrapper .is-active {
+    background-color: #d10709;
+}
+
+.comment-like-wrapper .is-active .mdi {
+    color: #fff;
+}
+
+#bar-comment {
+    margin-top: -15px;
+}
+
+.comment-like-wrapper .mdi {
+    color: #d10709;
 }

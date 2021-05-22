@@ -410,7 +410,7 @@ class Feed_Model extends CI_Model
 			->join("users", "users.ID = feed_item_comments.userid")
 			->join("feed_item_comment_likes", "feed_item_comment_likes.commentid = feed_item_comments.ID AND feed_item_comment_likes.userid = " . $userid, "LEFT OUTER")
 			->limit(5, $page)
-			->order_by("ID", "DESC")
+			->order_by("ID", "ASC")
 			->get("feed_item_comments");
 	}
 
@@ -620,7 +620,7 @@ class Feed_Model extends CI_Model
 	public function get_single_feed($s_id,$page,$user)   
 	{ 
 		return $this->db
-		   ->select("feed_item.ID, feed_item.content, feed_item.post_as,
+		   ->select("feed_item.ID, feed_item.content, feed_item.post_as,feed_item.share_count,
 				feed_item.timestamp, feed_item.userid,feed_item.share_count, feed_item.likes,
 				feed_item.comments, feed_item.location, feed_item.user_flag,
 				feed_item.profile_userid, feed_item.template, feed_item.site_flag,

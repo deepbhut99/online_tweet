@@ -20,6 +20,7 @@
         <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,500,550,600,700' rel='stylesheet' type='text/css'>
         <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
 
+        
         <!-- SCRIPTS -->
         <script type="text/javascript">
         var global_base_url = "<?php echo site_url('/') ?>";
