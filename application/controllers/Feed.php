@@ -130,7 +130,7 @@ class Feed extends CI_Controller
 
 				$config['upload_path'] = './uploads/';
 				$config['allowed_types'] = 'gif|jpg|png';
-				$config['max_size'] =$this->settings->info->file_size; //  here it is 2 MB
+				$config['max_size'] = $this->settings->info->file_size; //  here it is 2 MB
 				$config['encrypt_name'] = TRUE;
 				$this->upload->initialize($config);
 
@@ -524,6 +524,8 @@ class Feed extends CI_Controller
 		$page = $page + 10;
 		$url = site_url("feed/load_home_posts?page=" . $page);
 
+
+
 		$this->template->loadAjax(
 			"feed/feed.php",
 			array(
@@ -533,6 +535,7 @@ class Feed extends CI_Controller
 			1
 		);
 	}
+
 
 	public function load_all_posts()
 	{
@@ -921,54 +924,207 @@ class Feed extends CI_Controller
 
 	public function post_comment($id)
 	{
-		$id = intval($id);
-		$post = $this->feed_model->get_post($id, $this->user->info->ID);
-		if ($post->num_rows() == 0) {
-			$this->template->jsonError(lang("error_105"));
-		}
-		$post = $post->row();
+		$content = $this->common->nohtml($this->input->post("comment"));
+		
+		
 
-		$this->check_post_permission($post);
 
-		$comment = $this->common->nohtml($this->input->post("comment"));
-
-		if (empty($comment)) $this->template->jsonError(lang("error_106"));
-
-		$c = $this->common->get_user_tag_usernames($comment);
-		$comment = $c['content'];
+		$c = $this->common->get_user_tag_usernames($content);
+		$content = $c['content'];
 		$tagged_users = $c['users'];
 
+		$location = $this->common->nohtml($this->input->post("location"));
 
-		$hide_prev = intval($this->input->get("hide_prev"));
+		$users = array();
+		$user_flag = 0;
 
-		$page = intval($this->input->post("page"));
 
-		$commentid = $this->feed_model->add_comment(
+		$fileid = 0;
+		if (isset($_FILES['image_file']['size']) && $_FILES['image_file']['size'] > 0) {
+			$this->load->library("upload");
+			// Upload image
+
+			$files_added = array();
+
+			$files = $_FILES;
+			$cpt = count($_FILES['image_file']['name']);
+			for ($i = 0; $i < $cpt; $i++) {
+				$_FILES['image_file']['name'] = $files['image_file']['name'][$i];
+				$_FILES['image_file']['type'] = $files['image_file']['type'][$i];
+				$_FILES['image_file']['tmp_name'] = $files['image_file']['tmp_name'][$i];
+				$_FILES['image_file']['error'] = $files['image_file']['error'][$i];
+				$_FILES['image_file']['size'] = $files['image_file']['size'][$i];
+
+				$config['upload_path'] = './uploads/';
+				$config['allowed_types'] = 'gif|jpg|png';
+				$config['max_size'] = $this->settings->info->file_size; //  here it is 2 MB
+				$config['encrypt_name'] = TRUE;
+				$this->upload->initialize($config);
+
+				if (!$this->upload->do_upload('image_file')) {
+					$error = array('error' => $this->upload->display_errors());
+
+					$this->template->jsonError(lang("error_95") . "<br /><br />" .
+						$this->upload->display_errors());
+				}
+
+				$data = $this->upload->data();
+
+
+				$fileid = $this->feed_model->add_image(
+					array(
+						"file_name" => $data['file_name'],
+						"file_type" => $data['file_type'],
+						"extension" => $data['file_ext'],
+						"file_size" => $data['file_size'],
+						"userid" => $this->user->info->ID,
+						"timestamp" => time(),
+
+					)
+				);
+				// Update album count
+
+				$files_added[] = $fileid;
+			}
+		}
+
+		// Video
+		$videoid = 0;
+		if (!empty($youtube_url)) {
+			$matches = array();
+			preg_match("#(?<=v=)[a-zA-Z0-9-]+(?=&)|(?<=v\/)[^&\n]+|(?<=v=)[^&\n]+|(?<=youtu.be/)[^&\n]+#", $youtube_url, $matches);
+			if (!isset($matches[0]) || empty($matches[0])) {
+				$this->template->jsonError(lang("error_96"));
+			}
+			$youtube_id = $matches[0];
+			// Add
+			$videoid = $this->feed_model->add_video(
+				array(
+					"youtube_id" => $youtube_id,
+					"userid" => $this->user->info->ID,
+					"timestamp" => time()
+				)
+			);
+		} elseif (isset($_FILES['video_file']['size']) && $_FILES['video_file']['size'] > 0) {
+			$this->load->library("upload");
+			// Upload image
+			$this->upload->initialize(
+				array(
+					"upload_path" => $this->settings->info->upload_path,
+					"overwrite" => FALSE,
+					"max_filename" => 300,
+					"encrypt_name" => TRUE,
+					"remove_spaces" => TRUE,
+					"allowed_types" => "avi|mp4|webm|ogv|ogg|3gp|flv",
+					"max_size" => $this->settings->info->file_size,
+				)
+			);
+
+			if (!$this->upload->do_upload('video_file')) {
+				$error = array('error' => $this->upload->display_errors());
+
+				$this->template->jsonError(lang("error_97") . "<br /><br />" .
+					$this->upload->display_errors() . "<br />" . mime_content_type($_FILES['video_file']['tmp_name']));
+			}
+
+			$data = $this->upload->data();
+
+			$videoid = $this->feed_model->add_video(
+				array(
+					"file_name" => $data['file_name'],
+					"file_type" => $data['file_type'],
+					"extension" => $data['file_ext'],
+					"file_size" => $data['file_size'],
+					"userid" => $this->user->info->ID,
+					"timestamp" => time()
+				)
+			);
+		}
+
+
+		if (empty($content) && $fileid == 0 && $videoid == 0) {
+			$this->template->jsonError(lang("error_98"));
+		}
+
+		$site_flag = 0;
+		$url_matches = array();
+		preg_match_all(
+			'/[a-zA-Z]+:\/\/[0-9a-zA-Z;.\/\-?:@=_#&%~,+$]+/',
+			$content,
+			$url_matches
+		);
+
+		if (isset($url_matches[0])) {
+			$url_matches = $url_matches[0];
+		}
+
+		// Hashtags
+		$hashtags = $this->common->get_hashtags($content);
+
+		foreach ($hashtags[0] as $r) {
+			$r = trim($r);
+			$tag = substr($r, 1, strlen($r));
+			// Check it exists
+			$tagi = $this->feed_model->get_hashtag($tag);
+			if ($tagi->num_rows() == 0) {
+				$this->feed_model->add_hashtag(
+					array(
+						"hashtag" => $tag,
+						"count" => 1
+					)
+				);
+			} else {
+				$tagi = $tagi->row();
+				$this->feed_model->increment_hashtag($tagi->ID);
+			}
+		}
+
+		// Get urls in post
+		$sites = array();
+		foreach ($url_matches as $k => $v) {
+			$s = $this->common->get_url_details($v);
+
+			if (is_array($s)) {
+				$sites[] = $s;
+				$site_flag = 1;
+				// Replace url in content
+				$content = str_replace($v, "", $content);
+			}
+		}
+
+
+		$this->user_model->increase_posts($this->user->info->ID);
+		$postid = $this->feed_model->add_post(
 			array(
-				"postid" => $post->ID,
 				"userid" => $this->user->info->ID,
-				"comment" => $comment,
-				"timestamp" => time()
+				"content" => $content,
+				"timestamp" => time(),
+				"imageid" => $fileid,
+				"videoid" => $videoid,
+				"location" => $location,
+				"user_flag" => $user_flag,
+				"site_flag" => $site_flag
 			)
 		);
 
-		$comments_count = $post->comments + 1;
-		$this->feed_model->update_post(
-			$id,
-			array(
-				"comments" => $comments_count
-			)
-		);
+
+
 
 		foreach ($tagged_users as $user) {
-
+			// Notification
+			$this->feed_model->add_tagged_users(
+				array(
+					"userid" => $user->ID,
+					"postid" => $postid
+				)
+			);
 			$this->user_model->increment_field($user->ID, "noti_count", 1);
 			$this->user_model->add_notification(
 				array(
 					"userid" => $user->ID,
-					"url" => "home/index/3?postid=" . $post->ID . "&commentid=" . $commentid,
+					"url" => "home/index/3?postid=" . $postid,
 					"timestamp" => time(),
-					"message" => $this->user->info->first_name . " " . $this->user->info->last_name . " " . lang("ctn_652"),
+					"message" => $this->user->info->first_name . " " . $this->user->info->last_name . lang("ctn_649"),
 					"status" => 0,
 					"fromid" => $this->user->info->ID,
 					"username" => $user->username,
@@ -978,62 +1134,25 @@ class Feed extends CI_Controller
 			);
 		}
 
-		// Check user is not already added to subscriber feed
-		$sub = $this->feed_model->get_feed_subscriber($post->ID, $this->user->info->ID);
-		if ($sub->num_rows() == 0) {
-			$this->feed_model->add_feed_subscriber(
-				array(
-					"postid" => $post->ID,
-					"userid" => $this->user->info->ID
-				)
-			);
-		}
 
-		// get subscribers
-		$subs = $this->feed_model->get_feed_subscribers($id);
-		foreach ($subs->result() as $user) {
-			if ($user->ID != $this->user->info->ID) {
-				$this->user_model->increment_field($user->ID, "noti_count", 1);
-				$this->user_model->add_notification(
+
+		if (isset($_FILES['image_file']['size']) && $_FILES['image_file']['size'] > 0) {
+			foreach ($files_added as $fileid) {
+				$this->feed_model->feed_image_multi_post(
 					array(
-						"userid" => $user->ID,
-						"url" => "home/index/3?postid=" . $id . "&commentid=" . $commentid,
-						"timestamp" => time(),
-						"message" => $this->user->info->first_name . " " . $this->user->info->last_name . " " . lang("ctn_653"),
-						"status" => 0,
-						"fromid" => $this->user->info->ID,
-						"username" => $user->username,
-						"email" => $user->email,
-						"email_notification" => $user->email_notification
+						"post_id" => $postid,
+						"image_id" => $fileid
 					)
 				);
 			}
 		}
 
-		$comments = $this->feed_model->get_feed_comments($id, $this->user->info->ID, $page);
-		$com = array();
-		foreach ($comments->result() as $r) {
-			$com[] = $r;
-		}
-
-		$com = array_reverse($com);
-
-
-
-		$ajax = $this->template->returnAjax(
-			"feed/feed_comments_single.php",
-			array(
-				"com" => $com,
-				"post" => $post,
-				"page" => $page,
-				"hide_prev" => $hide_prev
-			)
-		);
+		//$this->session->set_flashdata("globalmsg", "Post posted!");
+		//redirect(site_url());
 
 		echo json_encode(
 			array(
-				"content" => $ajax,
-				"comments" => $comments_count
+				"success" => 1
 			)
 		);
 		exit();
@@ -1301,6 +1420,24 @@ class Feed extends CI_Controller
 			)
 		);
 	}
+	public function comments($id)
+	{
+		$id = intval($id);
+		$post = $this->feed_model->get_post($id, $this->user->info->ID);
+		if ($post->num_rows() == 0) {
+			$this->template->jsonError(lang("error_105"));
+		}
+		$post = $post->row();
+
+
+		$this->template->loadAjax(
+			"feed/comment.php",
+			array(
+				"post" => $post,
+
+			)
+		);
+	}
 
 	public function edit_post_pro($id)
 	{
@@ -1337,6 +1474,8 @@ class Feed extends CI_Controller
 		$content = $this->common->nohtml($this->input->post("content"));
 		$location = $this->common->nohtml($this->input->post("location"));
 		$image_url = $this->common->nohtml($this->input->post("image_url"));
+		$targetid = intval($this->input->post("targetid"));
+		$target_type = $this->common->nohtml($this->input->post("target_type"));
 		$youtube_url = $this->common->nohtml($this->input->post("youtube_url"));
 		$with_users = ($this->input->post("with_users"));
 
@@ -1370,37 +1509,85 @@ class Feed extends CI_Controller
 		} elseif (isset($_FILES['image_file']['size']) && $_FILES['image_file']['size'] > 0) {
 			$this->load->library("upload");
 			// Upload image
-			$this->upload->initialize(
-				array(
-					"upload_path" => $this->settings->info->upload_path,
-					"overwrite" => FALSE,
-					"max_filename" => 300,
-					"encrypt_name" => TRUE,
-					"remove_spaces" => TRUE,
-					"allowed_types" => "png|gif|jpeg|jpg",
-					"max_size" => $this->settings->info->file_size,
-				)
-			);
 
-			if (!$this->upload->do_upload('image_file')) {
-				$error = array('error' => $this->upload->display_errors());
+			$files_added = array();
 
-				$this->template->jsonError(lang("error_95") . "<br /><br />" .
-					$this->upload->display_errors());
+			$files = $_FILES;
+			$cpt = count($_FILES['image_file']['name']);
+			for ($i = 0; $i < $cpt; $i++) {
+				$_FILES['image_file']['name'] = $files['image_file']['name'][$i];
+				$_FILES['image_file']['type'] = $files['image_file']['type'][$i];
+				$_FILES['image_file']['tmp_name'] = $files['image_file']['tmp_name'][$i];
+				$_FILES['image_file']['error'] = $files['image_file']['error'][$i];
+				$_FILES['image_file']['size'] = $files['image_file']['size'][$i];
+
+				$config['upload_path'] = './uploads/';
+				$config['allowed_types'] = 'gif|jpg|png';
+				$config['max_size'] = $this->settings->info->file_size; //  here it is 2 MB
+				$config['encrypt_name'] = TRUE;
+				$this->upload->initialize($config);
+
+				if (!$this->upload->do_upload('image_file')) {
+					$error = array('error' => $this->upload->display_errors());
+
+					$this->template->jsonError(lang("error_95") . "<br /><br />" .
+						$this->upload->display_errors());
+				}
+
+				$data = $this->upload->data();
+
+
+				if ($target_type == "page_profile") {
+					// Check for default feed album
+					$album = $this->image_model->get_page_feed_album($targetid);
+					if ($album->num_rows() == 0) {
+						// Create
+						$albumid = $this->image_model->add_album(
+							array(
+								"pageid" => $targetid,
+								"feed_album" => 1,
+								"name" => lang("ctn_646"),
+								"description" => lang("ctn_647"),
+								"timestamp" => time()
+							)
+						);
+					} else {
+						$album = $album->row();
+						$albumid = $album->ID;
+					}
+				} else {
+					// Check for default feed album
+					$album = $this->image_model->get_user_feed_album($this->user->info->ID);
+					if ($album->num_rows() == 0) {
+						// Create
+						$albumid = $this->image_model->add_album(
+							array(
+								"userid" => $this->user->info->ID,
+								"feed_album" => 1,
+								"name" => lang("ctn_646"),
+								"description" => lang("ctn_648"),
+								"timestamp" => time()
+							)
+						);
+					} else {
+						$album = $album->row();
+						$albumid = $album->ID;
+					}
+				}
+
+				$fileid = $this->feed_model->add_image(
+					array(
+						"file_name" => $data['file_name'],
+						"file_type" => $data['file_type'],
+						"extension" => $data['file_ext'],
+						"file_size" => $data['file_size'],
+						"userid" => $this->user->info->ID,
+						"timestamp" => time(),
+						"albumid" => $albumid
+					)
+				);
+				$files_added[] = $fileid;
 			}
-
-			$data = $this->upload->data();
-
-			$fileid = $this->feed_model->add_image(
-				array(
-					"file_name" => $data['file_name'],
-					"file_type" => $data['file_type'],
-					"extension" => $data['file_ext'],
-					"file_size" => $data['file_size'],
-					"userid" => $this->user->info->ID,
-					"timestamp" => time()
-				)
-			);
 		}
 
 		// Video
@@ -1533,6 +1720,16 @@ class Feed extends CI_Controller
 				);
 			}
 		}
+		if (isset($_FILES['image_file']['size']) && $_FILES['image_file']['size'] > 0) {
+			foreach ($files_added as $fileid) {
+				$this->feed_model->feed_image_multi_post(
+					array(
+						"post_id" => $id,
+						"image_id" => $fileid
+					)
+				);
+			}
+		}
 
 		// Get the post for display
 		$post = $this->feed_model->get_post($id, $this->user->info->ID);
@@ -1594,6 +1791,22 @@ class Feed extends CI_Controller
 			}
 
 			$this->user_model->decrease_posts($post->userid);
+		}
+		if (!empty($post->share_id)) {
+			$share_id = $post->share_id;
+			$$share_id = intval($share_id);
+			$post = $this->feed_model->get_post($share_id, $this->user->info->ID);
+			if ($post->num_rows() == 0) {
+				$this->template->jsonError(lang("error_105"));
+			}
+			$post = $post->row();
+			$share_count = $post->share_count - 1;
+			$this->feed_model->update_post(
+				$share_id,
+				array(
+					"share_count" => $share_count
+				)
+			);
 		}
 		$this->feed_model->delete_post($id);
 
