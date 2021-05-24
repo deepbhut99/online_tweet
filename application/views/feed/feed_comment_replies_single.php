@@ -2,8 +2,8 @@
 	  <?php
 $r->comment = $this->common->replace_user_tags($r->comment);
 ?>
-<div id="comment-reply-<?php echo $r->ID ?>">
-<div class="media">
+<div id="comment-reply-<?php echo $r->ID ?>" class="com-rep">
+<div class="media" id="com-r">
   <div class="media-left">
     <a href="#">
       <img src="<?php echo base_url() ?>/<?php echo $this->settings->info->upload_path_relative ?>/<?php echo $r->avatar ?>" class="user-icon">

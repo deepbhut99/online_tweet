@@ -367,10 +367,20 @@ class Feed_Model extends CI_Model
 		$this->db->insert("user_images", $data);
 		return $this->db->insert_ID();
 	}
+	public function add_image_for_com($data) 
+	{
+		$this->db->insert("user_image_for_com", $data);
+		return $this->db->insert_ID();
+	}
 
 	public function add_video($data) 
 	{
 		$this->db->insert("user_videos", $data);
+		return $this->db->insert_ID();
+	}
+	public function add_videos_for_com($data) 
+	{
+		$this->db->insert("user_videos_for_com", $data);
 		return $this->db->insert_ID();
 	}
 
@@ -403,14 +413,14 @@ class Feed_Model extends CI_Model
 		return $this->db
 			->where("feed_item_comments.postid", $id)
 			->select("feed_item_comments.ID, feed_item_comments.timestamp, feed_item_comments.comment,
-				feed_item_comments.userid, feed_item_comments.likes, feed_item_comments.replies,
+				feed_item_comments.userid, feed_item_comments.likes, feed_item_comments.replies,feed_item_comments.imageid,feed_item_comments.videoid,
 				users.username, users.first_name, users.last_name, users.online_timestamp,
 				users.avatar,
 				feed_item_comment_likes.ID as commentlikeid")
 			->join("users", "users.ID = feed_item_comments.userid")
 			->join("feed_item_comment_likes", "feed_item_comment_likes.commentid = feed_item_comments.ID AND feed_item_comment_likes.userid = " . $userid, "LEFT OUTER")
 			->limit(5, $page)
-			->order_by("ID", "ASC")
+			->order_by("ID", "DESC")
 			->get("feed_item_comments");
 	}
 
@@ -500,11 +510,15 @@ class Feed_Model extends CI_Model
 		$this->db->insert("feed_item_images", $data);
 	}
 
+	public function feed_item_com_m_p_i($data) 
+	{
+		$this->db->insert("feed_item_com_m_p_i", $data);
+	}
+	
 	public function feed_image_multi_post($data) 
 	{
 		$this->db->insert("feed_image_multi_post", $data);
 	}
-
 
 
 	public function feed_image_multipost($id) 
@@ -517,6 +531,14 @@ class Feed_Model extends CI_Model
 			->join("user_images", "user_images.ID = feed_image_multi_post.image_id")
 			->join("user_albums", "user_albums.ID = user_images.albumid")
 			->get("feed_image_multi_post");
+	}
+	public function feed_item_com_m_pi($id) 
+	{
+		return $this->db->where("user_image_for_com.ID ", $id)->get("user_image_for_com");
+	}
+	public function feed_item_com_m_pv($id) 
+	{
+		return $this->db->where("user_videos_for_com.ID ", $id)->get("user_videos_for_com");
 	}
 	public function get_feed_images($id) 
 	{

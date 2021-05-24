@@ -200,81 +200,81 @@ $(document).ready(function() {
         return false;
     });
     // deep
-    // $('#social-com-form-edit').submit(function() {
+    $('#social-com-form-edit').submit(function() {
 
-    //     $(this).ajaxSubmit({
-    //         success: post_comment,
-    //         dataType: 'json',
-    //         clearForm: false
-    //     });
+        $(this).ajaxSubmit({
+            success: post_comment,
+            dataType: 'json',
+            clearForm: false
+        });
 
-    //     return false;
-    // });
+        return false;
+    });
 
-    // function post_comment(msg) {
-    //     if (msg.error) {
-    //         alert(msg.error_msg);
-    //         return;
-    //     }
-    //     $('#social-com-form-edit').clearForm();
+    function post_comment(msg) {
+        if (msg.error) {
+            alert(msg.error_msg);
+            return;
+        }
+        $('#social-com-form-edit').clearForm();
 
-    //     // reload feed
-    //     load_posts_wrapper();
-    // }
+        // reload feed
+        load_posts_wrapper();
+    }
 
     // deep
     $('.map_name').geocomplete();
 
-    $('#home_posts').on("focus", ".feed-comment-input", function() {
-        var id = $(this).attr("data-id");
+    // $('#home_posts').on("focus", ".feed-comment-input", function() {
+    //     var id = $(this).attr("data-id");
 
-        // check to see which events this comment already has
-        var events = $._data(this, 'events').keypress;
+    //     // check to see which events this comment already has
+    //     var events = $._data(this, 'events').keypress;
 
-        // Try to find if keypress has already been registered
-        // registering it twice causes duplicate comments
+    //     // Try to find if keypress has already been registered
+    //     // registering it twice causes duplicate comments
 
-        var hasEvents = false;
-        for (var i = 0; i < events.length; i++) {
-            if (events[i].namespace == "") {
-                hasEvents = true;
-            }
-        }
+    //     var hasEvents = false;
+    //     for (var i = 0; i < events.length; i++) {
+    //         if (events[i].namespace == "") {
+    //             hasEvents = true;
+    //         }
+    //     }
 
-        if (!hasEvents) {
-            $(this).keypress(function(e) {
-                if (e.keyCode == 13) {
-                    var comment = $(this).mentionsInput("getValue");
-                    $(this).val("");
-                    $(this).mentionsInput("clear");
-                    $.ajax({
-                        url: global_base_url + 'feed/post_comment/' + id,
-                        type: 'POST',
-                        data: {
-                            comment: comment,
-                            csrf_test_name: global_hash,
-                            page: global_page,
-                            hide_prev: hide_prev
-                        },
-                        dataType: 'json',
-                        success: function(msg) {
+    //     if (!hasEvents) {
+    //         $(this).keypress(function(e) {
+    //             if (e.keyCode == 13) {
+    //                 var comment = $(this).mentionsInput("getValue");
+    //                 $(this).val("");
+    //                 $(this).mentionsInput("clear");
+    //                 $.ajax({
+    //                     url: global_base_url + 'feed/post_comment/' + id,
+    //                     type: 'POST',
+    //                     data: {
+    //                         comment: comment,
+    //                         csrf_test_name: global_hash,
+    //                         page: global_page,
+    //                         hide_prev: hide_prev
+    //                     },
+    //                     dataType: 'json',
+    //                     success: function(msg) {
 
-                            if (msg.error) {
-                                alert(msg.error_msg);
-                                return;
-                            }
-                            $('#feed-comments-spot-' + id).html(msg.content);
-                            $('#feed-comments-' + id).html(msg.comments);
-                            $('#feed-comments-share-' + id).html(msg.comments);
+    //                         if (msg.error) {
+    //                             alert(msg.error_msg);
+    //                             return;
+    //                         }
+    //                         $('#feed-comments-spot-' + id).html(msg.content);
+    //                         $('#feed-comments-' + id).html(msg.comments);
+    //                         $('#feed-comments-share-' + id).html(msg.comments);
 
 
 
-                        }
-                    });
-                }
-            });
-        }
-    });
+    //                     }
+    //                 });
+    //             }
+    //         });
+    //     }
+    // });
 
     $('#home_posts').on("focus", ".feed-comment-input-reply", function() {
         var id = $(this).attr("data-id");
@@ -625,6 +625,7 @@ function delete_comment_reply(id) {
 }
 
 function load_comment_replies(id, replyid = 0) {
+
     $(".feed-comment-input-reply").mentionsInput("destroy");
     $.ajax({
         url: global_base_url + 'feed/get_feed_comments_replies/' + id,
@@ -633,11 +634,11 @@ function load_comment_replies(id, replyid = 0) {
 
         },
         success: function(msg) {
-            $('#feed-comment-reply-' + id).html(msg);
-            $('#feed-comment-reply-' + id).slideDown(400);
+            $('#feed-comment-' + id).html(msg);
+            $('#feed-comment-' + id).slideDown(400);
             $(".feed-comment-input-reply").mentionsInput({ source: global_base_url + 'home/get_user_friends' });
             if (replyid > 0) {
-                window.location.hash = '#comment-reply-' + replyid;
+                window.location.hash = '#feed-comment-' + replyid;
             }
         }
     })
@@ -770,12 +771,34 @@ function comments(id) {
             $('#share-modal').modal('show');
             $('#share-model-1').html(msg);
             //$("#editor-textarea").mentionsInput("destroy");
+            $('#social-com-form-edit').submit(function() {
 
+                $(this).ajaxSubmit({
+                    success: commentsdone,
+                    dataType: 'json',
+                    clearForm: true
+                });
+
+                return false;
+            });
+
+            load_comments(id);
+            $('#feed-comments-' + msg.feeditemid).html(msg.comments_count);
+            load_posts_wrapper();
 
         }
     })
 }
 
+
+
+
+
+
+function commentsdone(data) {
+    $('#share-modal').modal('hide');
+    $('#feed-post-com-' + data.id).replaceWith(data.post);
+}
 
 
 function delete_post(id) {

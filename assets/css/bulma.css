@@ -19164,3 +19164,22 @@ body {
     margin: auto !important;
     padding-left: 5px !important;
 }
+
+#card-f-com {
+    padding: 35px! important;
+}
+
+.feed-comment-area-c2 {
+    padding: 10px !important;
+}
+
+.com-rep {
+    border-top: 1px solid #DDD;
+}
+
+#com-r {
+    margin: auto;
+    margin-left: 24px;
+    margin-top: 10px;
+    margin-bottom: 4px;
+}
