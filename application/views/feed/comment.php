@@ -11,6 +11,7 @@ if (isset($postAs)) {
 <?php echo form_open_multipart(site_url("feed/post_comment/" . $post->ID), array("id" => "social-com-form-edit")) ?>
 
 
+
 <div class="card is-new-content is-highlighted">
     <!-- Top tabs -->
     <div class="tabs-wrapper">
