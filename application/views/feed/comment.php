@@ -284,7 +284,6 @@ if (isset($postAs)) {
                 </div>
             </div>
             <!-- /Compose form -->
-
             <!-- General extended options -->
             <div id="extended-options" class="compose-options">
                 <div class="columns is-multiline is-full">
